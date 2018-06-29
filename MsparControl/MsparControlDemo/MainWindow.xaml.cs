@@ -1,5 +1,8 @@
-﻿using System;
+﻿using MsparControlDemo.Engine;
+using MsparControlDemo.Model;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +18,18 @@ using System.Windows.Shapes;
 
 namespace MsparControlDemo
 {
+    public class VMMainWindow : ModelBase
+    {
+        private ObservableCollection<Data> dataList = new ObservableCollection<Data>();
+        public ObservableCollection<Data> DataList { get { return dataList; } set { dataList = value; OnPropertyChanged("DataList"); } }
+
+        public VMMainWindow()
+        {
+            DataList.Add(new Data("Sample1", "0"));
+            DataList.Add(new Data("Sample2", "1"));
+        }
+    }
+
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
     /// </summary>
@@ -23,6 +38,8 @@ namespace MsparControlDemo
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new VMMainWindow();
         }
     }
 }

@@ -1,0 +1,25 @@
+﻿using MsparControlDemo.Engine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MsparControlDemo.Model
+{
+    public class Data : ModelBase
+    {
+        private string value1 = "";
+        private string value2 = "";
+
+        public string Value1 { get { return value1; } set { value1 = value; OnPropertyChanged("Value1"); } }
+        public string Value2 { get { return value2; } set { value2 = value; OnPropertyChanged("Value2"); } }
+
+        public Data() { }
+        public Data(string value1, string value2)
+        {
+            Value1 = value1;
+            Value2 = value2;
+        }
+    }
+}
