@@ -21,7 +21,9 @@ namespace MsparControlDemo
     public class VMMainWindow : ModelBase
     {
         private ObservableCollection<Data> dataList = new ObservableCollection<Data>();
+        private double spinnerValue = 1E+100;
         public ObservableCollection<Data> DataList { get { return dataList; } set { dataList = value; OnPropertyChanged("DataList"); } }
+        public double SpinnerValue { get { return spinnerValue; } set { spinnerValue = value; OnPropertyChanged("SpinnerValue"); } }
 
         public VMMainWindow()
         {

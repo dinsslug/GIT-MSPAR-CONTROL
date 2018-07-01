@@ -3,5 +3,6 @@
         <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/DataGrid.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/Spinner.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/TextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/Misc.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

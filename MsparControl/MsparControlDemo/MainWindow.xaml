@@ -4,7 +4,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:MsparControlDemo"
-    xmlns:Controls="clr-namespace:MsparControl.Controls;assembly=MsparControl" x:Class="MsparControlDemo.MainWindow"
+    xmlns:Controls="clr-namespace:MsparControl.Controls;assembly=MsparControl"
+    x:Class="MsparControlDemo.MainWindow"
     mc:Ignorable="d"
     Title="MainWindow" Height="400" Width="600" Background="#FF1A1A1A">
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
@@ -21,9 +22,13 @@
             </Controls:DataGrid>
         </Border>
         <StackPanel Grid.Column="1" Margin="5" Width="200">
-            <Controls:TextBox Text="TextBox" InputMode="DecimalOnly" Margin="0,5,0,0" />
-            <Controls:Spinner Margin="0,5,0,0" />
+            <TextBox />
+            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" />
+            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" />
+            <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
+            <Controls:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
             <Button Content="Button" Margin="0,5,0,0" />
+            <TextBlock Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
         </StackPanel>
     </Grid>
 </Window>

@@ -7,38 +7,45 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace MsparControl.Controls
 {
-    public enum TextBoxMode
+    public class TextBox : BaseTextBox
     {
-        Normal, NumberOnly, DecimalOnly
-    }
-    
-    public class TextBox : System.Windows.Controls.TextBox
-    {
-        // InputMode Property
-        [Category("Option")]
-        public TextBoxMode InputMode { get { return (TextBoxMode)GetValue(InputModeProperty); } set { SetValue(InputModeProperty, value); } }
-        public static readonly DependencyProperty InputModeProperty =
-            DependencyProperty.RegisterAttached("InputMode", typeof(TextBoxMode), typeof(TextBox), new FrameworkPropertyMetadata(TextBoxMode.Normal));
-
-        [Category("Option")]
-        // Set Clear Button Property
-        public bool ClearButtonVisible { get { return (bool)GetValue(ClearButtonVisibleProperty); } set { SetValue(ClearButtonVisibleProperty, value); } }
-        public static DependencyProperty ClearButtonVisibleProperty =
-            DependencyProperty.Register("ClearButtonVisible", typeof(bool), typeof(TextBox), new PropertyMetadata(true));
+        public TextBox()
+        {
+            Loaded += TextBox_Loaded;
+        }
 
         static TextBox()
         {
             ClearCommand = new RoutedCommand("ClearCommand", typeof(TextBox));
-            
+
             CommandManager.RegisterClassCommandBinding(typeof(TextBox), new CommandBinding(ClearCommand, OnClearCommand));
 
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
         }
+        
+        [Category("Common Properties")]
+        public string DefaultText { get { return (string)GetValue(DefaultTextProperty); } set { SetValue(DefaultTextProperty, value); } }
+        public static readonly DependencyProperty DefaultTextProperty =
+            DependencyProperty.RegisterAttached("DefaultText", typeof(string), typeof(TextBox), new FrameworkPropertyMetadata(""));
+
+        [Category("Common Properties")]
+        public string EmptyDescription { get { return (string)GetValue(EmptyDescriptionProperty); } set { SetValue(EmptyDescriptionProperty, value); } }
+        public static DependencyProperty EmptyDescriptionProperty =
+            DependencyProperty.Register("EmptyDescription", typeof(string), typeof(TextBox), new PropertyMetadata(""));
+
+        [Category("Common Properties")]
+        public bool ClearButtonVisible { get { return (bool)GetValue(ClearButtonVisibleProperty); } set { SetValue(ClearButtonVisibleProperty, value); } }
+        public static DependencyProperty ClearButtonVisibleProperty =
+            DependencyProperty.Register("ClearButtonVisible", typeof(bool), typeof(TextBox), new PropertyMetadata(true));
+
+        [Category("Brushes")]
+        public Brush EmptyDescBrush { get { return (Brush)GetValue(EmptyDescBrushProperty); } set { SetValue(EmptyDescBrushProperty, value); } }
+        public static DependencyProperty EmptyDescBrushProperty =
+            DependencyProperty.Register("EmptyDescBrush", typeof(Brush), typeof(TextBox), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
         public static RoutedCommand ClearCommand { get; set; }
 
@@ -46,94 +53,58 @@ namespace MsparControl.Controls
         {
             TextBox control = sender as TextBox;
 
-            if (control != null)
-            {
-                control.Text = "";
-            }
+            control?.OnClear();
         }
-        
+
+        private void OnClear()
+        {
+            Text = DefaultText;
+        }
+
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             base.OnTextChanged(e);
-            
-            if(Template == null)
-            {
-                return;
-            }
-            var button = Template.FindName("BtnX", this) as Button;
 
-            if (Text.Length > 0 && ClearButtonVisible == true)
-            {
-                button.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                button.Visibility = Visibility.Hidden;
-            }
+            CheckTextLength();
         }
 
-        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        private new void TextBox_Loaded(object sender, RoutedEventArgs e)
         {
-            base.OnPreviewMouseLeftButtonDown(e);
-            
-            if (!IsKeyboardFocusWithin)
+            base.TextBox_Loaded(sender, e);
+
+            try
             {
-                Focus();
-                e.Handled = true;
+                CheckTextLength();
             }
+            catch { }
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        private void CheckTextLength()
         {
-            base.OnGotKeyboardFocus(e);
-
-            SelectAll();
-        }
-
-        protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
-        {
-            base.OnMouseDoubleClick(e);
-
-            SelectAll();
-        }
-
-        protected override void OnPreviewTextInput(TextCompositionEventArgs e)
-        {
-            base.OnPreviewTextInput(e);
-
-            switch (InputMode)
+            try
             {
-                case TextBoxMode.NumberOnly:
-                    if (!char.IsDigit(e.Text, e.Text.Length - 1))
-                    {
-                        e.Handled = true;
-                    }
-                    return;
-                case TextBoxMode.DecimalOnly:
-                    bool approvedDecimalPoint = false;
-                    bool approvedNegative = false;
+                var btnX = Template.FindName("BtnX", this) as Button;
+                var partEmptyDescription = Template.FindName("PART_EmptyDescription", this) as TextBlock;
 
-                    if (e.Text == ".")
-                    {
-                        if (!(Text.Contains(".") || CaretIndex == 0 || !char.IsDigit(Text, CaretIndex - 1)))
-                        {
-                            approvedDecimalPoint = true;
-                        }
-                    }
-                    else if (e.Text == "-")
-                    {
-                        if (!(Text.Contains("-") || CaretIndex != 0))
-                        {
-                            approvedNegative = true;
-                        }
-                    }
+                if (!Text.Equals(DefaultText))
+                {
+                    btnX.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    btnX.Visibility = Visibility.Hidden;
+                }
 
-                    if (!((char.IsDigit(e.Text, e.Text.Length - 1)) || approvedDecimalPoint || approvedNegative))
-                    {
-                        e.Handled = true;
-                    }
-                    return;
+                if (Text == "")
+                {
+                    partEmptyDescription.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    partEmptyDescription.Visibility = Visibility.Hidden;
+                }
             }
+            catch { }
         }
     }
 }
