@@ -12,7 +12,8 @@
         <Setter Property="BorderBrush" Value="{x:Null}" />
         <Setter Property="Focusable" Value="True" />
     </Style>
-    <Style TargetType="{x:Type Controls:Spinner}">
+    <Style TargetType="{x:Type Controls:Spinner}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <!--
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
         <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
@@ -24,6 +25,7 @@
         <Setter Property="AllowDrop" Value="true"/>
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+        -->
         <Setter Property="InputMode" Value="NumberOnly" />
         <Setter Property="Template">
             <Setter.Value>
@@ -78,6 +80,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <!--
         <Style.Triggers>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
@@ -87,5 +90,6 @@
                 <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
             </MultiTrigger>
         </Style.Triggers>
+        -->
     </Style>
 </ResourceDictionary>
