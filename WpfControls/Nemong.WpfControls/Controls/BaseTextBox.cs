@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace MsparControl.Controls
+namespace WpfControls.Controls
 {
     public enum TextBoxMode
     {

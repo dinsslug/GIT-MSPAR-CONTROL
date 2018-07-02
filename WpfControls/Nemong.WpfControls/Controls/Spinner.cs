@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace MsparControl.Controls
+namespace WpfControls.Controls
 {
     public class Spinner : BaseTextBox
     {

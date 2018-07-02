@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsparControl", "MsparControl\MsparControl.csproj", "{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemong.WpfControls", "Nemong.WpfControls\Nemong.WpfControls.csproj", "{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsparControlDemo", "MsparControlDemo\MsparControlDemo.csproj", "{133D3551-18ED-4660-8DB5-913E76BECD74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemong.WpfControls.Demo", "Nemong.WpfControls.Demo\Nemong.WpfControls.Demo.csproj", "{133D3551-18ED-4660-8DB5-913E76BECD74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

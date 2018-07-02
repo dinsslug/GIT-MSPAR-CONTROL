@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace MsparControl.Controls
+namespace WpfControls.Controls
 {
     public class TextBox : BaseTextBox
     {

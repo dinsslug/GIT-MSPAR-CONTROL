@@ -4,7 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:MsparControlDemo"
-    xmlns:Controls="clr-namespace:MsparControl.Controls;assembly=MsparControl"
+    xmlns:Controls="clr-namespace:WpfControls.Controls;assembly=Nemong.WpfControls"
     x:Class="MsparControlDemo.MainWindow"
     mc:Ignorable="d"
     Title="MainWindow" Height="400" Width="600" Background="#FF1A1A1A">
@@ -15,10 +15,10 @@
         </Grid.ColumnDefinitions>
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5">
             <Controls:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1">
-                <DataGrid.Columns>
+                <Controls:DataGrid.Columns>
                     <DataGridTextColumn Header="Header1" Binding="{Binding Value1}"/>
                     <DataGridTextColumn Header="Header2" Binding="{Binding Value2}"/>
-                </DataGrid.Columns>
+                </Controls:DataGrid.Columns>
             </Controls:DataGrid>
         </Border>
         <StackPanel Grid.Column="1" Margin="5" Width="200">
@@ -28,8 +28,9 @@
             <Controls:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" />
             <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
             <Controls:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" InputMode="Normal" />
-            <Button Content="Button" Margin="0,5,0,0" Style="{DynamicResource ButtonStyle1}" />
+            <Button Content="Button" Margin="0,5,0,0"/>
             <TextBlock Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
+            <RepeatButton x:Name="repeatButton" Content="RepeatButton" Style="{DynamicResource RepeatButtonStyle1}" />
         </StackPanel>
     </Grid>
 </Window>

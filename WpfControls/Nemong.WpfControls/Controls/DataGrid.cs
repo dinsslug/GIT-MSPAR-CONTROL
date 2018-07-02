@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace MsparControl.Controls
+namespace WpfControls.Controls
 {
     public class DataGrid : System.Windows.Controls.DataGrid
     {

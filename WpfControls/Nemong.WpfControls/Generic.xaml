@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Nemong.WpfControls;Component/Style/BaseButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Nemong.WpfControls;Component/Style/DataGrid.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Nemong.WpfControls;Component/Style/Spinner.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Nemong.WpfControls;Component/Style/TextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Nemong.WpfControls;Component/Style/Misc.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

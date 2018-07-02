@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MsparControl.Style"
+    xmlns:local="clr-namespace:WpfControls.Style"
     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
-    xmlns:Controls="clr-namespace:MsparControl.Controls"
-    x:Class="MsparControl.Style.DataGrid">
+    xmlns:Controls="clr-namespace:WpfControls.Controls"
+    x:Class="WpfControls.Style.DataGrid">
     <Style TargetType="{x:Type Controls:DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}">
         <Setter Property="CellStyle" Value="{DynamicResource UserDataGridCell}"/>
         <Setter Property="AutoGenerateColumns" Value="False"/>
