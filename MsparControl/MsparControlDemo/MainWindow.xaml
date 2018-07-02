@@ -28,7 +28,7 @@
             <Controls:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" />
             <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
             <Controls:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" InputMode="Normal" />
-            <Button Content="Button" Margin="0,5,0,0" />
+            <Button Content="Button" Margin="0,5,0,0" Style="{DynamicResource ButtonStyle1}" />
             <TextBlock Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
         </StackPanel>
     </Grid>
