@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/BaseButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/DataGrid.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/Spinner.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MsparControl;Component/Style/TextBox.xaml" />

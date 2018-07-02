@@ -42,7 +42,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <RepeatButton x:Name="PART_ButtonUp" Style="{DynamicResource SpinnerRepeatButtonTemplate}" Background="{TemplateBinding Background}" Command="{x:Static Controls:Spinner.IncreaseCommand}">
+                                <RepeatButton x:Name="PART_ButtonUp" Style="{DynamicResource SpinnerRepeatButtonTemplate}" Background="{TemplateBinding Background}" Command="{x:Static Controls:Spinner.IncreaseCommand}" Focusable="False" SnapsToDevicePixels="True">
                                     <Path Width="5"
                                           Height="3"
                                           Fill="Black"
@@ -51,9 +51,11 @@
                                           StrokeThickness="0"
                                           Data="M0,0L1,-1 2,0"
                                           HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center"
+                                          SnapsToDevicePixels="True"
+                                          UseLayoutRounding="True"/>
                                 </RepeatButton>
-                                <RepeatButton x:Name="PART_ButtonDown" Grid.Row="1" Style="{DynamicResource SpinnerRepeatButtonTemplate}" Background="{TemplateBinding Background}" Command="{x:Static Controls:Spinner.DecreaseCommand}">
+                                <RepeatButton x:Name="PART_ButtonDown" Grid.Row="1" Style="{DynamicResource SpinnerRepeatButtonTemplate}" Background="{TemplateBinding Background}" Command="{x:Static Controls:Spinner.DecreaseCommand}" Focusable="False" SnapsToDevicePixels="True">
                                     <Path Width="5"
                                           Height="3"
                                           Fill="Black"
@@ -61,7 +63,9 @@
                                           StrokeThickness="0"
                                           Data="M0,0L1,1 2,0"
                                           HorizontalAlignment="Center"
-                                          VerticalAlignment="Center" />
+                                          VerticalAlignment="Center"
+                                          SnapsToDevicePixels="True"
+                                          UseLayoutRounding="True"/>
                                 </RepeatButton>
                             </Grid>
                         </Grid>

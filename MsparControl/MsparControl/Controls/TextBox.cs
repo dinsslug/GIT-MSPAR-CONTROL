@@ -13,11 +13,6 @@ namespace MsparControl.Controls
 {
     public class TextBox : BaseTextBox
     {
-        public TextBox()
-        {
-            Loaded += TextBox_Loaded;
-        }
-
         static TextBox()
         {
             ClearCommand = new RoutedCommand("ClearCommand", typeof(TextBox));
@@ -25,6 +20,22 @@ namespace MsparControl.Controls
             CommandManager.RegisterClassCommandBinding(typeof(TextBox), new CommandBinding(ClearCommand, OnClearCommand));
 
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
+        }
+
+        public TextBox()
+        {
+            Loaded += TextBox_Loaded;
+        }
+
+        private new void TextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            base.TextBox_Loaded(sender, e);
+
+            try
+            {
+                CheckTextLength();
+            }
+            catch { }
         }
         
         [Category("Common Properties")]
@@ -68,17 +79,6 @@ namespace MsparControl.Controls
             CheckTextLength();
         }
 
-        private new void TextBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            base.TextBox_Loaded(sender, e);
-
-            try
-            {
-                CheckTextLength();
-            }
-            catch { }
-        }
-
         private void CheckTextLength()
         {
             try
@@ -86,13 +86,13 @@ namespace MsparControl.Controls
                 var btnX = Template.FindName("BtnX", this) as Button;
                 var partEmptyDescription = Template.FindName("PART_EmptyDescription", this) as TextBlock;
 
-                if (!Text.Equals(DefaultText))
+                if (!Text.Equals(DefaultText) && ClearButtonVisible == true)
                 {
                     btnX.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    btnX.Visibility = Visibility.Hidden;
+                    btnX.Visibility = Visibility.Collapsed;
                 }
 
                 if (Text == "")

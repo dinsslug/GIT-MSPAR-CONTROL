@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace MsparControl.Controls
@@ -27,13 +28,45 @@ namespace MsparControl.Controls
 
             DefaultStyleKeyProperty.OverrideMetadata(typeof(Spinner), new FrameworkPropertyMetadata(typeof(Spinner)));
         }
+        
+        public Spinner()
+        {
+            Loaded += Spinner_Loaded;
+        }
+
+        private void Spinner_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var partButtonUp = (RepeatButton)Template.FindName("PART_ButtonUp", this);
+                var partButtonDown = (RepeatButton)Template.FindName("PART_ButtonDown", this);
+                
+                partButtonUp.PreviewMouseLeftButtonDown += PartButton_PreviewMouseLeftButtonDown;
+                partButtonDown.PreviewMouseLeftButtonDown += PartButton_PreviewMouseLeftButtonDown;
+                partButtonUp.PreviewMouseLeftButtonUp += PartButton_PreviewMouseLeftButtonUp;
+                partButtonDown.PreviewMouseLeftButtonUp += PartButton_PreviewMouseLeftButtonUp;
+            }
+            catch { }
+        }
+
+        private void PartButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var be = GetBindingExpression(TextProperty);
+
+            be.UpdateSource();
+        }
+
+        private void PartButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
 
         [Category("Common Properties"), Description("값의 변화량을 설정합니다.")]
         public double Change { get { return (double)GetValue(ChangeProperty); } set { SetValue(ChangeProperty, value); } }
         private static readonly DependencyProperty ChangeProperty =
             DependencyProperty.Register("Change", typeof(double), typeof(Spinner),
             new PropertyMetadata(1.0));
-        
+
         public static RoutedCommand IncreaseCommand { get; set; }
         public static RoutedCommand DecreaseCommand { get; set; }
 
@@ -69,6 +102,36 @@ namespace MsparControl.Controls
             {
                 Text = (parsedValue - Change).ToString();
             }
+        }
+
+        private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            Spinner control = obj as Spinner;
+
+            if (control != null)
+            {
+                var newValue = (string)args.NewValue;
+                var oldValue = (string)args.OldValue;
+
+                var e = new RoutedPropertyChangedEventArgs<string>(oldValue, newValue, ValueChangedEvent);
+
+                control.OnValueChanged(e);
+            }
+        }
+
+        virtual protected void OnValueChanged(RoutedPropertyChangedEventArgs<string> e)
+        {
+            RaiseEvent(e);
+        }
+
+        private static readonly RoutedEvent ValueChangedEvent =
+            EventManager.RegisterRoutedEvent("ValueChanged", RoutingStrategy.Bubble,
+            typeof(RoutedPropertyChangedEventHandler<string>), typeof(Spinner));
+
+        public event RoutedPropertyChangedEventHandler<string> ValueChanged
+        {
+            add { AddHandler(ValueChangedEvent, value); }
+            remove { RemoveHandler(ValueChangedEvent, value); }
         }
     }
 }

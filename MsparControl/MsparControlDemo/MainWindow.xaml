@@ -23,10 +23,11 @@
         </Border>
         <StackPanel Grid.Column="1" Margin="5" Width="200">
             <TextBox />
-            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" />
+            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Height="20" />
+            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Width="200" HorizontalAlignment="Right" VerticalContentAlignment="Center" />
             <Controls:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" />
             <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
-            <Controls:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
+            <Controls:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" InputMode="Normal" />
             <Button Content="Button" Margin="0,5,0,0" />
             <TextBlock Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
         </StackPanel>

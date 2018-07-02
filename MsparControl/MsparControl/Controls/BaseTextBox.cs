@@ -14,7 +14,7 @@ namespace MsparControl.Controls
 {
     public enum TextBoxMode
     {
-        Normal, NumberOnly, DoubleOnly
+        Normal, NumberOnly, DecimalOnly
     }
     
     public class BaseTextBox : System.Windows.Controls.TextBox
@@ -83,7 +83,7 @@ namespace MsparControl.Controls
                         e.Handled = true;
                     }
                     return;
-                case TextBoxMode.DoubleOnly:
+                case TextBoxMode.DecimalOnly:
                     bool approvedDecimalPoint = false;
                     bool approvedNegative = false;
 

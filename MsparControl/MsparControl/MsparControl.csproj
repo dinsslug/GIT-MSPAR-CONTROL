@@ -55,6 +55,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Style\BaseButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Style\Misc.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
