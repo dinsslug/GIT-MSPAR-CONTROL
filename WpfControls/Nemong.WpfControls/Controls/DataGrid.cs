@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -23,11 +24,16 @@ namespace WpfControls.Controls
                     new CanExecuteRoutedEventHandler(OnCanExecutePaste)));
         }
 
+        [Category("Rows")]
+        public bool CanUserClipboardPaste { get { return (bool)GetValue(CanUserClipbardPasteProperty); } set { SetValue(CanUserClipbardPasteProperty, value); } }
+        public static readonly DependencyProperty CanUserClipbardPasteProperty =
+            DependencyProperty.RegisterAttached("CanUserClipboardPaste", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(false));
+
         #region Clipboard Paste
 
         private static void OnCanExecutePaste(object target, CanExecuteRoutedEventArgs args)
         {
-            ((DataGrid)target).OnCanExecutePaste(args);
+            (target as DataGrid).OnCanExecutePaste(args);
         }
 
         /// <summary>
@@ -42,7 +48,7 @@ namespace WpfControls.Controls
 
         private static void OnExecutedPaste(object target, ExecutedRoutedEventArgs args)
         {
-            ((DataGrid)target).OnExecutedPaste(args);
+            (target as DataGrid).OnExecutedPaste(args);
         }
 
         /// <summary>
@@ -51,10 +57,14 @@ namespace WpfControls.Controls
         /// <param name="args"></param>
         protected virtual void OnExecutedPaste(ExecutedRoutedEventArgs args)
         {
+            if (CanUserClipboardPaste == false)
+            {
+                return;
+            }
             // Parse the clipboard data
-            List<string[]> rowData = ClipboardHelper.ParseClipboardData();
+            List<string[]> data = ClipboardHelper.ParseClipboardData();
 
-            if (rowData == null)
+            if (data == null)
             {
                 return;
             }
@@ -63,65 +73,39 @@ namespace WpfControls.Controls
             UnselectAllCells();
 
             // Call OnPastingCellClipboardContent for each cell
-            int minRowIndex = Items.IndexOf(CurrentItem);
-            int maxRowIndex = Items.Count - 1;
-            int minColumnDisplayIndex = (SelectionUnit != DataGridSelectionUnit.FullRow) ? Columns.IndexOf(CurrentColumn) : 0;
-            int maxColumnDisplayIndex = Columns.Count - 1;
-            int rowDataIndex = 0;
+            int minDispRow = Items.IndexOf(CurrentItem);
+            int maxDispRow = Items.Count;
+            int minDispCol = Columns.IndexOf(CurrentColumn);
+            int maxDispCol = Columns.Count;
+            int dispRow, dispCol, dataRow, dataCol;
 
-            for (int i = minRowIndex; rowDataIndex < rowData.Count; i++, rowDataIndex++)
+            for (dispRow = minDispRow, dataRow = 0; dataRow < data.Count; dispRow++, dataRow++)
             {
-                if (i > maxRowIndex)
+                if (dispRow >= maxDispRow)
                 {
-                    var itemsSourceList = (IList)ItemsSource;
+                    var itemsSourceList = ItemsSource as IList;
                     var addValue = Activator.CreateInstance(Items[0].GetType());
-                    maxRowIndex++;
+                    maxDispRow++;
                     itemsSourceList.Add(addValue);
                 }
-
                 BeginEditCommand.Execute(null, this);
 
-                int columnDataIndex = 0;
-
-                for (int j = minColumnDisplayIndex; j <= maxColumnDisplayIndex && columnDataIndex < rowData[rowDataIndex].Length; j++, columnDataIndex++)
+                for (dispCol = minDispCol, dataCol = 0; dispCol < maxDispCol && dataCol < data[dataRow].Length; dispCol++, dataCol++)
                 {
-                    DataGridColumn column = ColumnFromDisplayIndex(j);
-                    column.OnPastingCellClipboardContent(Items[i], rowData[rowDataIndex][columnDataIndex]);
+                    DataGridColumn column = ColumnFromDisplayIndex(dispCol);
+                    column.OnPastingCellClipboardContent(Items[dispRow], data[dataRow][dataCol]);
 
                     if (SelectionUnit == DataGridSelectionUnit.CellOrRowHeader || SelectionUnit == DataGridSelectionUnit.Cell)
                     {
-                        SelectedCells.Add(new DataGridCellInfo(Items[minRowIndex], Columns[minColumnDisplayIndex]));
+                        SelectedCells.Add(new DataGridCellInfo(Items[dispRow], Columns[dispCol]));
                     }
                 }
                 if (SelectionUnit == DataGridSelectionUnit.FullRow)
                 {
-                    SelectedItems.Add(Items[i]);
+                    SelectedItems.Add(Items[dispRow]);
                 }
-
                 CommitEditCommand.Execute(this, this);
             }
-
-            /*
-             * 
-            bool hasAddedNewRow = false;
-            // Update Selection
-            if (hasAddedNewRow)
-            {
-                UnselectAll();
-                UnselectAllCells();
-
-                CurrentItem = Items[minRowIndex];
-
-                if (SelectionUnit == DataGridSelectionUnit.FullRow)
-                {
-                    SelectedItem = Items[minRowIndex];
-                }
-                else if (SelectionUnit == DataGridSelectionUnit.CellOrRowHeader || SelectionUnit == DataGridSelectionUnit.Cell)
-                {
-                    SelectedCells.Add(new DataGridCellInfo(Items[minRowIndex], Columns[minColumnDisplayIndex]));
-                }
-            }
-            */
         }
 
         /// <summary>

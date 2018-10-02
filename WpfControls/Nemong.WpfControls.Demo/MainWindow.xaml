@@ -8,13 +8,18 @@
     x:Class="MsparControlDemo.MainWindow"
     mc:Ignorable="d"
     Title="MainWindow" Height="400" Width="600" Background="#FF1A1A1A">
+    <Window.Resources>
+        <Style TargetType="Controls:DataGrid" BasedOn="{StaticResource {x:Type Controls:DataGrid}}">
+            
+        </Style>
+    </Window.Resources>
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5">
-            <Controls:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1">
+            <Controls:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanUserClipboardPaste="True">
                 <Controls:DataGrid.Columns>
                     <DataGridTextColumn Header="Header1" Binding="{Binding Value1}"/>
                     <DataGridTextColumn Header="Header2" Binding="{Binding Value2}"/>
