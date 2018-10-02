@@ -38,7 +38,7 @@
                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                        Cursor="IBeam"/>
-                            <Button x:Name="BtnX" Style="{DynamicResource BaseButtonStyle}" Padding="0,0,1,0" HorizontalAlignment="Right" Focusable="False" Command="{x:Static Controls:TextBox.ClearCommand}" Visibility="Hidden" Grid.Column="1" SnapsToDevicePixels="True" Width="18" VerticalAlignment="Stretch">
+                            <Button x:Name="BtnX" Style="{DynamicResource BaseButtonStyle}" Padding="0,0,1,0" HorizontalAlignment="Right" Focusable="False" Command="{x:Static Controls:TextBox.ClearCommand}" Visibility="Hidden" SnapsToDevicePixels="True" Width="18" VerticalAlignment="Stretch">
                                 <Path Data="M 1,1 L 9,9 M 9,1 L 1,9" Stroke="Black" SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Center" UseLayoutRounding="True"/>
                             </Button>
                         </Grid>
@@ -53,6 +53,9 @@
                         <Trigger Property="IsKeyboardFocused" Value="true">
                             <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding ComputedVerticalScrollBarVisibility, ElementName=PART_ContentHost}" Value="Visible">
+                            <Setter TargetName="BtnX" Property="Margin" Value="0,0,16,0" />
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

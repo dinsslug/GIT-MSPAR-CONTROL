@@ -53,6 +53,9 @@
     <Compile Include="Style\Misc.xaml.cs">
       <DependentUpon>Misc.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Style\TextBox.xaml.cs">
+      <DependentUpon>TextBox.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Style\BaseButton.xaml">

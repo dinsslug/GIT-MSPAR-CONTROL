@@ -25,7 +25,7 @@
             <TextBox />
             <Controls:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Height="20" />
             <Controls:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Width="200" HorizontalAlignment="Right" VerticalContentAlignment="Center" />
-            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" />
+            <Controls:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" VerticalScrollBarVisibility="Auto" />
             <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
             <Controls:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" InputMode="Normal" />
             <Button Content="Button" Margin="0,5,0,0"/>
