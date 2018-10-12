@@ -19,10 +19,11 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5">
-            <Controls:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanUserClipboardPaste="True">
+            <Controls:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanClipboardPaste="True" CanMultipleSortColumns="False">
                 <Controls:DataGrid.Columns>
                     <DataGridTextColumn Header="Header1" Binding="{Binding Value1}"/>
                     <DataGridTextColumn Header="Header2" Binding="{Binding Value2}"/>
+                    <DataGridTextColumn Header="Header3" Binding="{Binding Value3}"/>
                 </Controls:DataGrid.Columns>
             </Controls:DataGrid>
         </Border>

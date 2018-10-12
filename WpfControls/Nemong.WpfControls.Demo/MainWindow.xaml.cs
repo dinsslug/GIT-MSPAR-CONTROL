@@ -27,8 +27,10 @@ namespace MsparControlDemo
 
         public VMMainWindow()
         {
-            DataList.Add(new Data("Sample1", "0"));
-            DataList.Add(new Data("Sample2", "1"));
+            DataList.Add(new Data("Sample1", "0", "ZZZ"));
+            DataList.Add(new Data("Sample2", "2", "AAA"));
+            DataList.Add(new Data("Sample3", "5", "DDD"));
+            DataList.Add(new Data("Sample4", "3", "EEE"));
         }
     }
 

@@ -25,9 +25,72 @@ namespace WpfControls.Controls
         }
 
         [Category("Rows")]
-        public bool CanUserClipboardPaste { get { return (bool)GetValue(CanUserClipbardPasteProperty); } set { SetValue(CanUserClipbardPasteProperty, value); } }
-        public static readonly DependencyProperty CanUserClipbardPasteProperty =
-            DependencyProperty.RegisterAttached("CanUserClipboardPaste", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(false));
+        public bool CanClipboardPaste { get { return (bool)GetValue(CanClipboardPasteProperty); } set { SetValue(CanClipboardPasteProperty, value); } }
+        public static readonly DependencyProperty CanClipboardPasteProperty =
+            DependencyProperty.RegisterAttached("CanClipboardPaste", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(false));
+
+        [Category("Columns")]
+        public bool CanMultipleSortColumns { get { return (bool)GetValue(CanMultipleSortColumnsProperty); } set { SetValue(CanMultipleSortColumnsProperty, value); } }
+        public static readonly DependencyProperty CanMultipleSortColumnsProperty =
+            DependencyProperty.RegisterAttached("CanMultipleSortColumns", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(true));
+
+        #region OnSorting
+        protected override void OnSorting(DataGridSortingEventArgs e)
+        {
+            if (CanMultipleSortColumns == false)
+            {
+                foreach (var c in Columns)
+                {
+                    if (c.Equals(e.Column) == false) c.SortDirection = null;
+                }
+                switch (e.Column.SortDirection)
+                {
+                    case ListSortDirection.Ascending: e.Column.SortDirection = ListSortDirection.Descending; break;
+                    case ListSortDirection.Descending: e.Column.SortDirection = null; break;
+                    default: e.Column.SortDirection = ListSortDirection.Ascending; break;
+                }
+                Items.SortDescriptions.Clear();
+                if (e.Column.SortDirection != null)
+                {
+                    Items.SortDescriptions.Add(new SortDescription(e.Column.SortMemberPath, (ListSortDirection)e.Column.SortDirection));
+                }
+            }
+            else
+            {
+                var befSortDesc = new SortDescriptionCollection();
+                var curSortDesc = Items.SortDescriptions;
+
+                foreach (var s in curSortDesc)
+                {
+                    befSortDesc.Add(s);
+                }
+                switch (e.Column.SortDirection)
+                {
+                    case ListSortDirection.Ascending: e.Column.SortDirection = ListSortDirection.Descending; break;
+                    case ListSortDirection.Descending: e.Column.SortDirection = null; break;
+                    default: e.Column.SortDirection = ListSortDirection.Ascending; break;
+                }
+                curSortDesc.Clear();
+                if (e.Column.SortDirection != null)
+                {
+                    curSortDesc.Add(new SortDescription(e.Column.SortMemberPath, (ListSortDirection)e.Column.SortDirection));
+                }
+                foreach (var s in befSortDesc)
+                {
+                    if (s.PropertyName != e.Column.SortMemberPath)
+                    {
+                        curSortDesc.Add(s);
+                    }
+                }
+                foreach (var s in curSortDesc)
+                {
+                    var idx = Columns.ToList().FindIndex(i => i.SortMemberPath == s.PropertyName);
+                    Columns[idx].SortDirection = s.Direction;
+                }
+            }
+            e.Handled = true;
+        }
+        #endregion
 
         #region Clipboard Paste
 
@@ -57,7 +120,7 @@ namespace WpfControls.Controls
         /// <param name="args"></param>
         protected virtual void OnExecutedPaste(ExecutedRoutedEventArgs args)
         {
-            if (CanUserClipboardPaste == false)
+            if (CanClipboardPaste == false)
             {
                 return;
             }
