@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemont.WPF", "Nemont.WPF\Nemont.WPF.csproj", "{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemont.WPF.Demo", "Nemont.WPF.Demo\Nemont.WPF.Demo.csproj", "{133D3551-18ED-4660-8DB5-913E76BECD74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemont.WPF.Extensions", "Nemont.WPF.Extensions\Nemont.WPF.Extensions.csproj", "{A0FD7C08-E443-4452-A74A-B45A46CE1B25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E613B5D-52EE-4CCB-84E0-D1CC40F80602}.Release|Any CPU.Build.0 = Release|Any CPU
+		{133D3551-18ED-4660-8DB5-913E76BECD74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133D3551-18ED-4660-8DB5-913E76BECD74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133D3551-18ED-4660-8DB5-913E76BECD74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133D3551-18ED-4660-8DB5-913E76BECD74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

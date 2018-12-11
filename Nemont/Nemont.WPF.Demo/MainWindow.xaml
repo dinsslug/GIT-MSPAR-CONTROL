@@ -1,0 +1,40 @@
+﻿<Window x:Class="MsparControlDemo.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:MsparControlDemo"
+    xmlns:Nemont="urn:nemont-wpf"
+    mc:Ignorable="d"
+    Title="MainWindow" Height="400" Width="600" Background="#FF1A1A1A">
+    <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Nemont:ExplorerView Width="300" DataContext="{Binding VMExplorerView}" />
+        </Grid>
+        <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5" Grid.Column="1">
+            <Nemont:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanClipboardPaste="True" CanMultipleSortColumns="False">
+                <Nemont:DataGrid.Columns>
+                    <DataGridTextColumn Header="Header1" Binding="{Binding Value1}"/>
+                    <DataGridTextColumn Header="Header2" Binding="{Binding Value2}"/>
+                    <DataGridTextColumn Header="Header3" Binding="{Binding Value3}"/>
+                </Nemont:DataGrid.Columns>
+            </Nemont:DataGrid>
+        </Border>
+        <StackPanel Grid.Column="2" Margin="5" Width="200">
+            <TextBox />
+            <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Height="20" />
+            <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Width="200" HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+            <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" VerticalScrollBarVisibility="Auto" />
+            <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
+            <Nemont:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" InputMode="Normal" />
+            <Button Content="Button" Margin="0,5,0,0"/>
+            <TextBlock Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
+            <RepeatButton x:Name="repeatButton" Content="RepeatButton" />
+        </StackPanel>
+    </Grid>
+</Window>
