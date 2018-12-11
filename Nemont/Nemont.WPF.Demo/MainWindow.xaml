@@ -1,12 +1,12 @@
-﻿<Window x:Class="MsparControlDemo.MainWindow"
+﻿<Window x:Class="Nemont.Demo.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:MsparControlDemo"
+    xmlns:local="clr-namespace:Nemont.Demo"
     xmlns:Nemont="urn:nemont-wpf"
     mc:Ignorable="d"
-    Title="MainWindow" Height="400" Width="600" Background="#FF1A1A1A">
+    Title="MainWindow" Width="900" Height="500" Background="#FF1A1A1A">
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

@@ -14,15 +14,15 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Fill" Color="White"/>
+    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Stroke" Color="Black"/>
     <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Fill" Color="#FF595959"/>
     <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Stroke" Color="#FF262626"/>
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF1BBBFA"/>
     <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Fill" Color="Transparent"/>
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Stroke" Color="#FF262626"/>
+    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF1BBBFA"/>
     <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Fill" Color="#FF595959"/>
+    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Stroke" Color="#FF262626"/>
     <PathGeometry x:Key="TreeArrow" Figures="M0,0 L0,6 L6,0 z"/>
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Fill" Color="Transparent"/>
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Stroke" Color="#FF989898"/>
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Width" Value="16"/>
@@ -65,7 +65,8 @@
         </Setter>
     </Style>
     <Style x:Key="TreeViewFolder" TargetType="{x:Type TreeViewItem}">
-        <Setter Property="Background" Value="Transparent"/>
+        <EventSetter Event="MouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown" />
+        <Setter Property="Background" Value="#00000000"/>
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="Padding" Value="1,0,0,0"/>
@@ -76,21 +77,33 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <ControlTemplate.Resources>
+                        <en:MarginConverter x:Key="MarginConverter" />
+                    </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MinWidth="19" Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ExpandCollapseToggleStyle}"/>
-                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.Column="1" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true" HorizontalAlignment="Left" Grid.ColumnSpan="2">
-                            <ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" Margin="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}, Converter={StaticResource MarginConverter}}" />
+                        <Border x:Name="BdContent" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" Margin="0,0,0,0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="19,0,0,0" />
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding RcClick}" />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseRightButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding RcRightClick}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </Border>
-                        <ItemsPresenter x:Name="ItemsHost" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="1" Margin="0,0,0,0"/>
+                        <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ExpandCollapseToggleStyle}"/>
+                        <ItemsPresenter x:Name="ItemsHost" Grid.ColumnSpan="2" Grid.Row="1" Margin="19,0,0,0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="false">
@@ -132,6 +145,22 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="CheckModeImage" TargetType="{x:Type Image}">
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Margin" Value="-11,0,0,0" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding CheckMode}" Value="0">
+                <Setter Property="Source" Value="pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/status_empty.png" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding CheckMode}" Value="1">
+                <Setter Property="Source" Value="pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/status_check.png" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding CheckMode}" Value="2">
+                <Setter Property="Source" Value="pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/status_undefine.png" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
     <Style TargetType="{x:Type Nemont:ExplorerView}">
         <Setter Property="Template">
             <Setter.Value>
@@ -140,16 +169,9 @@
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type ev:Folder}" ItemsSource="{Binding Children}">
                                 <StackPanel Orientation="Horizontal" Margin="1,0,3,0">
+                                    <Image Margin="-11,0,0,0" Style="{StaticResource CheckModeImage}" />
                                     <Image x:Name="icon" Source="{Binding IconClosed}" Width="16" Height="16" />
                                     <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center" />
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Click">
-                                            <i:InvokeCommandAction Command="{Binding RcClick}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger EventName="RightClick">
-                                            <i:InvokeCommandAction Command="{Binding RcRightClick}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
                                 </StackPanel>
                                 <HierarchicalDataTemplate.Triggers>
                                     <MultiDataTrigger>
@@ -163,33 +185,9 @@
                             </HierarchicalDataTemplate>
                             <DataTemplate DataType="{x:Type ev:Item}">
                                 <StackPanel Orientation="Horizontal" Margin="1,0,3,0">
-                                    <Image Width="8" Height="16" Margin="-11,0,0,0" >
-                                        <Image.Style>
-                                            <Style TargetType="{x:Type Image}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding CheckMode}" Value="0">
-                                                        <Setter Property="Source" Value="pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/status_empty.png" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding CheckMode}" Value="1">
-                                                        <Setter Property="Source" Value="pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/status_check.png" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding CheckMode}" Value="2">
-                                                        <Setter Property="Source" Value="pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/status_undefine.png" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Image.Style>
-                                    </Image>
+                                    <Image Margin="-11,0,0,0" Style="{StaticResource CheckModeImage}" />
                                     <Image x:Name="icon" Source="{Binding Icon}" Width="16" Height="16" />
                                     <TextBlock FontWeight="{Binding SelectedFontWeight}" Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center" />
-                                    <i:Interaction.Triggers>
-                                        <en:HandlingEventTrigger EventName="MouseLeftButtonUp">
-                                            <i:InvokeCommandAction Command="{Binding RcClick}" />
-                                        </en:HandlingEventTrigger>
-                                        <en:HandlingEventTrigger EventName="MouseRightButtonUp">
-                                            <i:InvokeCommandAction Command="{Binding RcRightClick}" />
-                                        </en:HandlingEventTrigger>
-                                    </i:Interaction.Triggers>
                                 </StackPanel>
                             </DataTemplate>
                         </TreeView.Resources>

@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MsparControlDemo
+namespace Nemont.Demo
 {
     public class VMMainWindow : ModelBase
     {
@@ -37,7 +37,26 @@ namespace MsparControlDemo
             VMExplorerView.Root = new ObservableCollection<Base>();
             var file = new File("ASDF", "Directory");
             file.Click = () => { MessageBox.Show("ASDFASDF"); };
-            VMExplorerView.Root.Add(file);
+            file.RightClick = () => { MessageBox.Show("ASDF#@"); };
+            file.CheckMode = Enumerables.CheckMode.Checked;
+            ///VMExplorerView.Root.Add(file);
+
+            var file2 = new File("ASDF", "Directory");
+            file2.Click = () => { MessageBox.Show("AS34DF"); };
+            file2.RightClick = () => { MessageBox.Show("AS34@"); };
+            file2.CheckMode = Enumerables.CheckMode.Undefined;
+            var file3 = new File("FF", "");
+
+            var folder2 = new FileFolder("SDF", "");
+
+            var folder = new FileFolder("DFDF", "Dsaf");
+            folder.Sub.Add(folder2);
+            folder2.Sub.Add(file3);
+            folder.Sub.Add(file);
+            folder.Sub.Add(file2);
+
+            folder.RightClick = () => { MessageBox.Show("ASDF#@"); };
+            VMExplorerView.Root.Add(folder);
         }
     }
 

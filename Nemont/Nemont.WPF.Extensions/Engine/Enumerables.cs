@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nemont.Engine
+namespace Nemont.Enumerables
 {
     public enum CheckMode
     {

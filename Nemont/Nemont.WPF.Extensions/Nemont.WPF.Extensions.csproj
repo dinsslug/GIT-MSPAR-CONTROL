@@ -46,17 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\ExplorerView.cs" />
+    <Compile Include="Engine\Converter.cs" />
     <Compile Include="Engine\HandlingEventTrigger.cs" />
     <Compile Include="Engine\RelayCommand.cs" />
-    <Compile Include="Model\File.cs" />
-    <Compile Include="Model\FileFolder.cs" />
-    <Compile Include="Model\Folder.cs" />
-    <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\ExplorerViewModels.cs" />
     <Compile Include="Model\VMExplorerView.cs" />
     <Compile Include="Engine\Enumerables.cs" />
     <Compile Include="Engine\ModelBase.cs" />
-    <Compile Include="Model\Base.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Themes\ExplorerView.xaml.cs">
+      <DependentUpon>ExplorerView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\file.png" />
@@ -75,6 +75,10 @@
     <Resource Include="Asset\status_check.png" />
     <Resource Include="Asset\status_empty.png" />
     <Resource Include="Asset\status_undefine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\folder_close.png" />
+    <Resource Include="Asset\folder_open.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
