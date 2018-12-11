@@ -167,10 +167,11 @@
                 <ControlTemplate>
                     <TreeView ItemsSource="{Binding Root}" ItemContainerStyle="{StaticResource TreeViewFolder}" >
                         <TreeView.Resources>
-                            <HierarchicalDataTemplate DataType="{x:Type ev:Folder}" ItemsSource="{Binding Children}">
+                            <en:StringToBitmapConverter x:Key="StringToBitmapConverter" />
+                            <HierarchicalDataTemplate DataType="{x:Type ev:EvFolder}" ItemsSource="{Binding Children}">
                                 <StackPanel Orientation="Horizontal" Margin="1,0,3,0">
                                     <Image Margin="-11,0,0,0" Style="{StaticResource CheckModeImage}" />
-                                    <Image x:Name="icon" Source="{Binding IconClosed}" Width="16" Height="16" />
+                                    <Image x:Name="icon" Source="{Binding IconClosedUri, Converter={StaticResource StringToBitmapConverter}}" Width="16" Height="16" />
                                     <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <HierarchicalDataTemplate.Triggers>
@@ -179,14 +180,14 @@
                                             <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=IsExpanded}" Value="True" />
                                             <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=HasItems}" Value="True" />
                                         </MultiDataTrigger.Conditions>
-                                        <Setter TargetName="icon" Property="Source" Value="{Binding IconOpened}"/>
+                                        <Setter TargetName="icon" Property="Source" Value="{Binding IconOpenedUri, Converter={StaticResource StringToBitmapConverter}}"/>
                                     </MultiDataTrigger>
                                 </HierarchicalDataTemplate.Triggers>
                             </HierarchicalDataTemplate>
-                            <DataTemplate DataType="{x:Type ev:Item}">
+                            <DataTemplate DataType="{x:Type ev:EvItem}">
                                 <StackPanel Orientation="Horizontal" Margin="1,0,3,0">
                                     <Image Margin="-11,0,0,0" Style="{StaticResource CheckModeImage}" />
-                                    <Image x:Name="icon" Source="{Binding Icon}" Width="16" Height="16" />
+                                    <Image x:Name="icon" Source="{Binding IconUri, Converter={StaticResource StringToBitmapConverter}}" Width="16" Height="16" />
                                     <TextBlock FontWeight="{Binding SelectedFontWeight}" Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DataTemplate>

@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 
 namespace Nemont.Model.ExplorerView
 {
-    public abstract class Base : INotifyPropertyChanged
+    public abstract class EvBase : INotifyPropertyChanged
     {
         // Binding Variables
         protected string name = "";
@@ -43,7 +43,7 @@ namespace Nemont.Model.ExplorerView
             RightClick?.Invoke();
         }
 
-        protected Base(string name)
+        protected EvBase(string name)
         {
             Name = name;
 
@@ -58,53 +58,54 @@ namespace Nemont.Model.ExplorerView
         public event PropertyChangedEventHandler PropertyChanged;
     }
 
-    public class Item : Base
+    public class EvItem : EvBase
     {
-        protected string iconUri;
-        public BitmapImage Icon { get { return new BitmapImage(new Uri(iconUri)); } }
+        public string IconUri { get; set; }
 
-        public Item(string name, string iconUri) : base(name)
+        public EvItem(string name, string iconUri) : base(name)
         {
-            this.iconUri = iconUri;
+            this.IconUri = iconUri;
         }
     }
 
-    public class File : Item
+    public class EvFile : EvItem, IFile
     {
-        public string RelPath;
+        public string RelPath { get; set; }
+        public int TypeNumber = 0;
 
-        public File(string name, string relPath) : base(name, "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/file.png")
+        public EvFile(string name, string relPath) : base(name, "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/file.png")
         {
             RelPath = relPath;
         }
     }
 
-    public class Folder : Base
+    public class EvFolder : EvBase
     {
         // Binding Variables
-        protected ObservableCollection<Base> sub = new ObservableCollection<Base>();
-        protected bool isNodeExpanded = true;
-        public ObservableCollection<Base> Sub { get { return sub; } set { sub = value; OnPropertyChanged("Children"); } }
+        protected ObservableCollection<EvBase> sub = new ObservableCollection<EvBase>();
+        protected bool isNodeExpanded = false;
+        public ObservableCollection<EvBase> Sub { get { return sub; } set { sub = value; OnPropertyChanged("Children"); } }
         public bool IsNodeExpanded { get { return isNodeExpanded; } set { isNodeExpanded = value; OnPropertyChanged("IsNodeExpanded"); } }
 
         // Icon
-        public string IconClosedUri { get; set; } = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_close.png";
-        public string IconOpenedUri { get; set; } = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_open.png";
-        public BitmapImage IconClosed { get { return new BitmapImage(new Uri(IconClosedUri)); } }
-        public BitmapImage IconOpened { get { return new BitmapImage(new Uri(IconOpenedUri)); } }
+        public string IconClosedUri { get; set; }
+        public string IconOpenedUri { get; set; }
 
         public IList Children { get { return new CompositeCollection() { new CollectionContainer() { Collection = Sub } }; } }
 
-        public Folder(string name) : base(name) { }
+        public EvFolder(string name) : base(name) { }
     }
 
-    public class FileFolder : Folder
+    public class EvFileFolder : EvFolder, IFile
     {
-        public string RelPath;
+        public string RelPath { get; set; }
 
-        public FileFolder(string name, string relPath) : base(name)
+        public EvFileFolder(string name, string relPath) : base(name)
         {
             RelPath = relPath;
+
+            IconClosedUri = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_close.png";
+            IconOpenedUri = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_open.png";
         }
     }
 }

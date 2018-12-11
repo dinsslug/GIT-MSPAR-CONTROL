@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Nemont.Demo"
     xmlns:Nemont="urn:nemont-wpf"
     mc:Ignorable="d"
-    Title="MainWindow" Width="900" Height="500" Background="#FF1A1A1A">
+    Title="MainWindow" Width="900" Height="500" Background="#FF1A1A1A" UseLayoutRounding="True">
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

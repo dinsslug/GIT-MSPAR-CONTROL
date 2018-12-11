@@ -4,6 +4,7 @@ using Nemont.Model.ExplorerView;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,29 +35,6 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "5", "DDD"));
             DataList.Add(new Data("Sample4", "3", "EEE"));
 
-            VMExplorerView.Root = new ObservableCollection<Base>();
-            var file = new File("ASDF", "Directory");
-            file.Click = () => { MessageBox.Show("ASDFASDF"); };
-            file.RightClick = () => { MessageBox.Show("ASDF#@"); };
-            file.CheckMode = Enumerables.CheckMode.Checked;
-            ///VMExplorerView.Root.Add(file);
-
-            var file2 = new File("ASDF", "Directory");
-            file2.Click = () => { MessageBox.Show("AS34DF"); };
-            file2.RightClick = () => { MessageBox.Show("AS34@"); };
-            file2.CheckMode = Enumerables.CheckMode.Undefined;
-            var file3 = new File("FF", "");
-
-            var folder2 = new FileFolder("SDF", "");
-
-            var folder = new FileFolder("DFDF", "Dsaf");
-            folder.Sub.Add(folder2);
-            folder2.Sub.Add(file3);
-            folder.Sub.Add(file);
-            folder.Sub.Add(file2);
-
-            folder.RightClick = () => { MessageBox.Show("ASDF#@"); };
-            VMExplorerView.Root.Add(folder);
         }
     }
 
