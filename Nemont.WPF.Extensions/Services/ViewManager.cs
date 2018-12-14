@@ -23,6 +23,8 @@ namespace Nemont.Explorer
         private string filter = "*";
         private Dictionary<string, FilterInfo> Filter = new Dictionary<string, FilterInfo>();
         private FileSystemWatcher Watcher;
+        public List<string> ExceptExtensions = new List<string>();
+        public EvBase SelectedItem { get; set; }
 
         public ViewManager() { }
         public ViewManager(string path, bool autoRefresh)
@@ -109,17 +111,22 @@ namespace Nemont.Explorer
             /// Add item if a file don't exist in the treeview
             for (int i = 0; i < existChk.Length; i++) {
                 if (existChk[i] == false) {
+                    var name = fileSystems[i].Name;
+                    var path = GetRelativePath(Path, fileSystems[i].FullName);
+
                     if (Directory.Exists(fileSystems[i].FullName)) {
-                        var addFolder = new EvFileFolder(fileSystems[i].Name, parent.RelativePath + "\\" + fileSystems[i].Name);
+                        var addFolder = new EvFileFolder(name, path);
                         RefreshRecur(addFolder);
                         parent.Sub.Add(addFolder);
                     }
                     else {
                         EvFile addItem;
-                        var name = fileSystems[i].Name;
-                        var path = parent.RelativePath + "\\" + fileSystems[i].Name;
                         var ext = System.IO.Path.GetExtension(fileSystems[i].Name);
                         var fil = Filter.ContainsKey(ext);
+                        var isException = ExceptExtensions.FindIndex(item => item == ext);
+                        if (isException != -1) {
+                            continue;
+                        }
                         if (fil == true) {
                             addItem = Activator.CreateInstance(Filter[ext].Type, name, path) as EvFile;
                         }

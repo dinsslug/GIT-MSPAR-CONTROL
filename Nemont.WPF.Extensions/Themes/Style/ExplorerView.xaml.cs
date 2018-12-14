@@ -29,5 +29,10 @@ namespace Nemont.Themes.Style
 
             return source as TreeViewItem;
         }
+
+        private void ToggleButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

@@ -48,18 +48,20 @@ namespace Nemont.Explorer.Model
         protected FontWeight fontWeight = FontWeights.Normal;
         protected int status;
         protected bool isNodeSelected = false;
+        protected Visibility visibility = Visibility.Visible;
         public string Name { get { return name; } set { name = value; OnPropertyChanged("Name"); } }
         public FontWeight FontWeight { get { return fontWeight; } set { fontWeight = value; OnPropertyChanged("FontWeight"); } }
         public int Status { get { return status; } set { status = value; OnPropertyChanged("Status"); } }
         public bool IsNodeSelected { get { return isNodeSelected; } set { isNodeSelected = value; OnPropertyChanged("IsNodeSelected"); } }
+        public Visibility Visibility { get { return visibility; } set { visibility = value; OnPropertyChanged("Visibility"); } }
 
         internal RelayCommand RcClick { get; set; }
         internal RelayCommand RcRightClick { get; set; }
         internal RelayCommand RcDoubleClick { get; set; }
 
-        public Action Click;
-        public Action RightClick;
-        public Action DoubleClick;
+        internal Action Click = null;
+        internal Action RightClick = null;
+        internal Action DoubleClick = null;
 
         private void OnClick()
         {
@@ -85,7 +87,7 @@ namespace Nemont.Explorer.Model
             RcDoubleClick = new RelayCommand(OnDoubleClick);
         }
 
-        internal void OnPropertyChanged(string prop)
+        public void OnPropertyChanged(string prop)
         {
             if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(prop)); }
         }
@@ -137,6 +139,7 @@ namespace Nemont.Explorer.Model
         {
             RelativePath = relativePath;
 
+            IsNodeExpanded = true;
             IconClosedUri = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_close.png";
             IconOpenedUri = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_open.png";
         }

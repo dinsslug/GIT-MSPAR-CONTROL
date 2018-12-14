@@ -39,7 +39,8 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "5", "DDD"));
             DataList.Add(new Data("Sample4", "3", "EEE"));
 
-            ViewManager = new ViewManager("E:\\TEST", true);
+            ViewManager = new ViewManager("F:\\TEST", true);
+            ViewManager.ExceptExtensions.Add(".txt");
             ViewManager.AddFilter(typeof(EvText), ".txt1");
             ViewManager.AddFilter(typeof(EvText), ".txt2");
             ViewManager.AddFilter(typeof(EvText), ".txt3");
@@ -92,7 +93,7 @@ namespace Nemont.Demo
             var treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
 
             if (treeViewItem != null) {
-                MessageBox.Show("Double click");
+
             }
         }
 
