@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Nemont.Engine
+namespace Nemont.Explorer
 {
-    public class HandlingEventTrigger : System.Windows.Interactivity.EventTrigger
+    internal class HandlingEventTrigger : System.Windows.Interactivity.EventTrigger
     {
         protected override void OnEvent(System.EventArgs eventArgs)
         {

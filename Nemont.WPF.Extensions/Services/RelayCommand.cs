@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Nemont.Engine
+namespace Nemont.Explorer
 {
-    public class RelayCommand : ICommand
+    internal class RelayCommand : ICommand
     {
         readonly Action<object> execute;
         readonly Predicate<object> canExecute;

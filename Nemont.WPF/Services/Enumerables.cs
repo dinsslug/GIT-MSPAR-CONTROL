@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nemont.Enumerables
+namespace Nemont
 {
-    public enum CheckMode
+    public enum TextBoxMode
     {
-        Empty,
-        Checked,
-        Undefined
+        Normal, NumberOnly, DecimalOnly
     }
 }

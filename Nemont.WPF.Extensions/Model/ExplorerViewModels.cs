@@ -1,5 +1,4 @@
-﻿using Nemont.Engine;
-using Nemont.Enumerables;
+﻿using Nemont.Explorer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,23 +11,51 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace Nemont.Model.ExplorerView
+namespace Nemont.Explorer.Model
 {
+    public static class EvModel
+    {
+        public static EvBase ElementAt(EvFileFolder parent, string relPath)
+        {
+            return _ElementAt(parent, relPath);
+        }
+
+        private static EvBase _ElementAt(EvBase parent, string relPath)
+        {
+            EvBase result = null;
+
+            if (parent is IFile && (parent as IFile).RelativePath == relPath) {
+                return parent;
+            }
+
+            if (parent is EvFileFolder) {
+                var tvFolder = parent as EvFileFolder;
+                foreach (var item in tvFolder.Sub) {
+                    result = _ElementAt(item, relPath);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
     public abstract class EvBase : INotifyPropertyChanged
     {
         // Binding Variables
         protected string name = "";
-        protected FontWeight selectedFontWeight = FontWeights.Normal;
-        protected CheckMode checkMode = CheckMode.Empty;
+        protected FontWeight fontWeight = FontWeights.Normal;
+        protected int status;
         protected bool isNodeSelected = false;
         public string Name { get { return name; } set { name = value; OnPropertyChanged("Name"); } }
-        public FontWeight SelectedFontWeight { get { return selectedFontWeight; } set { selectedFontWeight = value; OnPropertyChanged("SelectedFontWeight"); } }
-        public CheckMode CheckMode { get { return checkMode; } set { checkMode = value; OnPropertyChanged("CheckMode"); } }
+        public FontWeight FontWeight { get { return fontWeight; } set { fontWeight = value; OnPropertyChanged("FontWeight"); } }
+        public int Status { get { return status; } set { status = value; OnPropertyChanged("Status"); } }
         public bool IsNodeSelected { get { return isNodeSelected; } set { isNodeSelected = value; OnPropertyChanged("IsNodeSelected"); } }
         public Thickness ContentMargin { get; set; } = new Thickness(0.0);
 
-        public RelayCommand RcClick { get; set; }
-        public RelayCommand RcRightClick { get; set; }
+        internal RelayCommand RcClick { get; set; }
+        internal RelayCommand RcRightClick { get; set; }
 
         public Action Click;
         public Action RightClick;
@@ -64,18 +91,17 @@ namespace Nemont.Model.ExplorerView
 
         public EvItem(string name, string iconUri) : base(name)
         {
-            this.IconUri = iconUri;
+            IconUri = iconUri;
         }
     }
 
     public class EvFile : EvItem, IFile
     {
-        public string RelPath { get; set; }
-        public int TypeNumber = 0;
+        public string RelativePath { get; set; }
 
-        public EvFile(string name, string relPath) : base(name, "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/file.png")
+        public EvFile(string name, string relativePath) : base(name, "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/icon_default.png")
         {
-            RelPath = relPath;
+            RelativePath = relativePath;
         }
     }
 
@@ -98,11 +124,11 @@ namespace Nemont.Model.ExplorerView
 
     public class EvFileFolder : EvFolder, IFile
     {
-        public string RelPath { get; set; }
+        public string RelativePath { get; set; }
 
-        public EvFileFolder(string name, string relPath) : base(name)
+        public EvFileFolder(string name, string relativePath) : base(name)
         {
-            RelPath = relPath;
+            RelativePath = relativePath;
 
             IconClosedUri = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_close.png";
             IconOpenedUri = "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/folder_open.png";

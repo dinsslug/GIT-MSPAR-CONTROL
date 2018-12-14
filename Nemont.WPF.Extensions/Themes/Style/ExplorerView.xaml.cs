@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Nemont.Themes
+namespace Nemont.Themes.Style
 {
     public partial class ExplorerView
     {

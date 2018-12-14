@@ -6,15 +6,22 @@
     xmlns:local="clr-namespace:Nemont.Demo"
     xmlns:Nemont="urn:nemont-wpf"
     mc:Ignorable="d"
-    Title="MainWindow" Width="900" Height="500" Background="#FF1A1A1A" UseLayoutRounding="True">
-    <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="0,11,0,0">
+    Title="MainWindow" Width="900" Height="500" UseLayoutRounding="True">
+    <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Grid>
-            <Nemont:ExplorerView Width="300" DataContext="{Binding VMExplorerView}" />
+        <Grid Width="300">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Nemont:ExplorerView x:Name="ExplorerView" ItemsSource="{Binding ViewManager.Root}"
+                                 MouseRightButtonUp="ExplorerView_MouseRightButtonUp"
+                                 MouseDoubleClick="ExplorerView_MouseDoubleClick" />
+            <Button Content="Test" Command="{Binding RcTest}" Grid.Row="1" />
         </Grid>
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5" Grid.Column="1">
             <Nemont:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanClipboardPaste="True" CanMultipleSortColumns="False">

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nemont.Engine
+namespace Nemont.Themes.Style
 {
-    interface IFile
+    public partial class Spinner
     {
-        string RelPath { get; set; }
     }
 }

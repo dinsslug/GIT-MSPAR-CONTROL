@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
-namespace Nemont.Style
+namespace Nemont.Themes.Style
 {
-    public partial class TextBox
+    public partial class DataGrid
     {
     }
 }

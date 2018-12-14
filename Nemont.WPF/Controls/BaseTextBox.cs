@@ -12,11 +12,6 @@ using System.Windows.Media;
 
 namespace Nemont
 {
-    public enum TextBoxMode
-    {
-        Normal, NumberOnly, DecimalOnly
-    }
-    
     public class BaseTextBox : System.Windows.Controls.TextBox
     {
         public BaseTextBox()

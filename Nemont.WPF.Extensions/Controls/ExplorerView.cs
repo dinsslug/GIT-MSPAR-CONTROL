@@ -1,16 +1,17 @@
-﻿using Nemont.Model.ExplorerView;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Nemont
 {
-    public class ExplorerView : System.Windows.Controls.Control
+    public class ExplorerView : System.Windows.Controls.TreeView
     {
-        public ExplorerView()
+        static ExplorerView()
         {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ExplorerView), new FrameworkPropertyMetadata(typeof(ExplorerView)));
         }
     }
 }

@@ -48,24 +48,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\ExplorerView.cs" />
-    <Compile Include="Engine\Converter.cs" />
-    <Compile Include="Engine\HandlingEventTrigger.cs" />
-    <Compile Include="Engine\IFile.cs" />
-    <Compile Include="Engine\RelayCommand.cs" />
+    <Compile Include="Services\Converter.cs" />
+    <Compile Include="Services\Enumerables.cs" />
+    <Compile Include="Services\HandlingEventTrigger.cs" />
+    <Compile Include="Services\Interfaces.cs" />
+    <Compile Include="Services\StatusManager.cs" />
+    <Compile Include="Services\RelayCommand.cs" />
+    <Compile Include="Services\ViewManager.cs" />
     <Compile Include="Model\ExplorerViewModels.cs" />
-    <Compile Include="Model\VMExplorerView.cs" />
-    <Compile Include="Engine\Enumerables.cs" />
-    <Compile Include="Engine\ModelBase.cs" />
+    <Compile Include="Model\FilterInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Themes\ExplorerView.xaml.cs">
+    <Compile Include="Themes\Style\ExplorerView.xaml.cs">
       <DependentUpon>ExplorerView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\file.png" />
+    <Resource Include="Asset\icon_default.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Themes\ExplorerView.xaml">
+    <Page Include="Themes\Style\ExplorerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -75,16 +76,17 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\status_check.png" />
-    <Resource Include="Asset\status_empty.png" />
-    <Resource Include="Asset\status_undefine.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Asset\folder_close.png" />
     <Resource Include="Asset\folder_open.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\status_empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Asset\icon_empty.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

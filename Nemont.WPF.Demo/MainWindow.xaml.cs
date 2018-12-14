@@ -1,6 +1,7 @@
-﻿using MsparControlDemo.Engine;
-using MsparControlDemo.Model;
-using Nemont.Model.ExplorerView;
+﻿using Nemont.Demo.Model;
+using Nemont.Demo.Services;
+using Nemont.Explorer;
+using Nemont.Explorer.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,19 +23,46 @@ namespace Nemont.Demo
 {
     public class VMMainWindow : ModelBase
     {
-        public VMExplorerView VMExplorerView { get; set; } = new VMExplorerView();
         private ObservableCollection<Data> dataList = new ObservableCollection<Data>();
         private double spinnerValue = 5;
         public ObservableCollection<Data> DataList { get { return dataList; } set { dataList = value; OnPropertyChanged("DataList"); } }
         public double SpinnerValue { get { return spinnerValue; } set { spinnerValue = value; OnPropertyChanged("SpinnerValue"); } }
+        public ViewManager ViewManager { get; set; }
+        public RelayCommand RcTest { get; set; }
 
         public VMMainWindow()
         {
+            RcTest = new RelayCommand(OnTest);
+
             DataList.Add(new Data("Sample1", "0", "ZZZ"));
             DataList.Add(new Data("Sample2", "2", "AAA"));
             DataList.Add(new Data("Sample3", "5", "DDD"));
             DataList.Add(new Data("Sample4", "3", "EEE"));
 
+            ViewManager = new ViewManager("F:\\TEST", true);
+            ViewManager.AddFilter(".txt1", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/site.png");
+            ViewManager.AddFilter(".txt2", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/site.png");
+            ViewManager.AddFilter(".txt3", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/site.png");
+            StatusManager.Add((int)StatusMode.None, "");
+            StatusManager.Add((int)StatusMode.Checked, "pack://application:,,,/Nemont.WPF.Demo;component/Asset/status_check.png");
+            StatusManager.Add((int)StatusMode.Undefined, "pack://application:,,,/Nemont.WPF.Demo;component/Asset/status_undefine.png");
+            ViewManager.RefreshDirectory();
+            var item1 = new EvItem("Item 1", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/polyline.png");
+            var item2 = new EvItem("Item 2", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/polyline.png");
+            var folder1 = new EvFolder("Custom Folder");
+            item1.Status = (int)StatusMode.Checked;
+            folder1.IconOpenedUri = "pack://application:,,,/Nemont.WPF.Demo;component/Asset/polygon.png";
+            folder1.IconClosedUri = "pack://application:,,,/Nemont.WPF.Demo;component/Asset/polygon.png";
+            folder1.Sub.Add(item1);
+            folder1.Sub.Add(item2);
+            (ViewManager.Root[0] as EvFolder).Sub.Insert(0, folder1);
+
+            ViewManager.Filtering(".txt1");
+        }
+
+        public void OnTest(object param)
+        {
+            ViewManager.Filtering(FilterMode.FolderOnly);
         }
     }
 
@@ -48,6 +76,16 @@ namespace Nemont.Demo
             InitializeComponent();
 
             DataContext = new VMMainWindow();
+        }
+
+        private void ExplorerView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            
+        }
+
+        private void ExplorerView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("ASDF");
         }
     }
 }

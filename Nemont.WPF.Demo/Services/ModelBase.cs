@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nemont.Engine
+namespace Nemont.Demo.Services
 {
     public class ModelBase : INotifyPropertyChanged
     {
