@@ -28,9 +28,9 @@ namespace Nemont.Explorer
         public ViewManager(string path, bool autoRefresh)
         {
             Path = path;
-            Filter.Add("?", new FilterInfo(-2, null));
-            Filter.Add("//", new FilterInfo(-1, null));
-            Filter.Add("*", new FilterInfo(0, null));
+            Filter.Add("?", new FilterInfo(typeof(EvItem), -2));
+            Filter.Add("//", new FilterInfo(typeof(EvFileFolder), -1));
+            Filter.Add("*", new FilterInfo(typeof(EvFile), 0));
             Root.Add(new EvFileFolder(Path, ""));
             Watcher = new FileSystemWatcher();
             Watcher.Path = Path;
@@ -44,10 +44,10 @@ namespace Nemont.Explorer
             AutoRefresh = autoRefresh;
         }
 
-        public void AddFilter(string extension, string iconUri)
+        public void AddFilter(Type type, string extension)
         {
             try {
-                Filter.Add(extension, new FilterInfo(Filter.Count - 2, iconUri));
+                Filter.Add(extension, new FilterInfo(type, Filter.Count - 2));
                 Filter["*"].Order = Filter.Count - 2;
             }
             catch {
@@ -61,16 +61,16 @@ namespace Nemont.Explorer
                 filter = "\\";
                 RefreshDirectory();
             }
-            else if (filterMode == FilterMode.FileAll) {
+            else if (filterMode == FilterMode.All) {
                 filter = "*";
                 RefreshDirectory();
             }
         }
 
-        public void Filtering(string filterParameter)
+        public void Filtering(string fileExtension)
         {
-            if (filterParameter != "\\" && filterParameter != "*" && Filter.ContainsKey(filterParameter) == true) {
-                filter = filterParameter;
+            if (fileExtension != "\\" && fileExtension != "*" && Filter.ContainsKey(fileExtension) == true) {
+                filter = fileExtension;
                 RefreshDirectory();
             }
         }
@@ -115,11 +115,16 @@ namespace Nemont.Explorer
                         parent.Sub.Add(addFolder);
                     }
                     else {
-                        var addItem = new EvFile(fileSystems[i].Name, parent.RelativePath + "\\" + fileSystems[i].Name);
+                        EvFile addItem;
+                        var name = fileSystems[i].Name;
+                        var path = parent.RelativePath + "\\" + fileSystems[i].Name;
                         var ext = System.IO.Path.GetExtension(fileSystems[i].Name);
                         var fil = Filter.ContainsKey(ext);
                         if (fil == true) {
-                            addItem.IconUri = Filter[ext].IconUri;
+                            addItem = Activator.CreateInstance(Filter[ext].Type, name, path) as EvFile;
+                        }
+                        else {
+                            addItem = new EvFile(name, path);
                         }
                         parent.Sub.Add(addItem);
                     }

@@ -8,13 +8,13 @@ namespace Nemont.Explorer.Model
 {
     internal class FilterInfo
     {
+        internal Type Type;
         internal int Order;
-        internal string IconUri;
 
-        internal FilterInfo(int order, string iconUri)
+        internal FilterInfo(Type type, int order)
         {
+            Type = type;
             Order = order;
-            IconUri = iconUri;
         }
     }
 }

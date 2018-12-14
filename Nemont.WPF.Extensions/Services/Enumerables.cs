@@ -9,6 +9,6 @@ namespace Nemont.Explorer
     public enum FilterMode
     {
         FolderOnly,
-        FileAll
+        All
     }
 }

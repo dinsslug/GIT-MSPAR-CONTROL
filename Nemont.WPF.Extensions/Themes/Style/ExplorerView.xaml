@@ -103,6 +103,9 @@
                                 <i:EventTrigger EventName="MouseRightButtonUp">
                                     <i:InvokeCommandAction Command="{Binding RcRightClick}" />
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding RcDoubleClick}" />
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </Border>
                         <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ExpandCollapseToggleStyle}" />

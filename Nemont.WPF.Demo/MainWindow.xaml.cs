@@ -39,10 +39,10 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "5", "DDD"));
             DataList.Add(new Data("Sample4", "3", "EEE"));
 
-            ViewManager = new ViewManager("F:\\TEST", true);
-            ViewManager.AddFilter(".txt1", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/site.png");
-            ViewManager.AddFilter(".txt2", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/site.png");
-            ViewManager.AddFilter(".txt3", "pack://application:,,,/Nemont.WPF.Demo;component/Asset/site.png");
+            ViewManager = new ViewManager("E:\\TEST", true);
+            ViewManager.AddFilter(typeof(EvText), ".txt1");
+            ViewManager.AddFilter(typeof(EvText), ".txt2");
+            ViewManager.AddFilter(typeof(EvText), ".txt3");
             StatusManager.Add((int)StatusMode.None, "");
             StatusManager.Add((int)StatusMode.Checked, "pack://application:,,,/Nemont.WPF.Demo;component/Asset/status_check.png");
             StatusManager.Add((int)StatusMode.Undefined, "pack://application:,,,/Nemont.WPF.Demo;component/Asset/status_undefine.png");
@@ -57,7 +57,7 @@ namespace Nemont.Demo
             folder1.Sub.Add(item2);
             (ViewManager.Root[0] as EvFolder).Sub.Insert(0, folder1);
 
-            ViewManager.Filtering(".txt1");
+            ViewManager.Filtering(FilterMode.All);
         }
 
         public void OnTest(object param)
@@ -80,12 +80,28 @@ namespace Nemont.Demo
 
         private void ExplorerView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            
+            var treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+
+            if (treeViewItem != null) {
+                MessageBox.Show("Right click");
+            }
         }
 
         private void ExplorerView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("ASDF");
+            var treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+
+            if (treeViewItem != null) {
+                MessageBox.Show("Double click");
+            }
+        }
+
+        private TreeViewItem VisualUpwardSearch(DependencyObject source)
+        {
+            while (source != null && !(source is TreeViewItem)) {
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return source as TreeViewItem;
         }
     }
 }

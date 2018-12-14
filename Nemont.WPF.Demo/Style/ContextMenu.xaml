@@ -1,0 +1,12 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Nemont.Demo.Style">
+    <ContextMenu x:Key="ContextMenu1">
+        <MenuItem x:Name="Item1" Header="Item 1" />
+        <MenuItem x:Name="Item2" Header="Item 2" />
+        <Separator />
+        <MenuItem x:Name="Item3" Header="Item 3" />
+        <MenuItem x:Name="Item4" Header="Item 4" />
+    </ContextMenu>
+</ResourceDictionary>

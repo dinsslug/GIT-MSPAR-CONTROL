@@ -15,23 +15,23 @@ namespace Nemont.Explorer.Model
 {
     public static class EvModel
     {
-        public static EvBase ElementAt(EvFileFolder parent, string relPath)
+        public static EvBase ElementAt(EvFileFolder parent, string relativePath)
         {
-            return _ElementAt(parent, relPath);
+            return _ElementAt(parent, relativePath);
         }
 
-        private static EvBase _ElementAt(EvBase parent, string relPath)
+        private static EvBase _ElementAt(EvBase parent, string relativePath)
         {
             EvBase result = null;
 
-            if (parent is IFile && (parent as IFile).RelativePath == relPath) {
+            if (parent is IFile && (parent as IFile).RelativePath == relativePath) {
                 return parent;
             }
 
             if (parent is EvFileFolder) {
                 var tvFolder = parent as EvFileFolder;
                 foreach (var item in tvFolder.Sub) {
-                    result = _ElementAt(item, relPath);
+                    result = _ElementAt(item, relativePath);
                     if (result != null) {
                         return result;
                     }
@@ -52,13 +52,14 @@ namespace Nemont.Explorer.Model
         public FontWeight FontWeight { get { return fontWeight; } set { fontWeight = value; OnPropertyChanged("FontWeight"); } }
         public int Status { get { return status; } set { status = value; OnPropertyChanged("Status"); } }
         public bool IsNodeSelected { get { return isNodeSelected; } set { isNodeSelected = value; OnPropertyChanged("IsNodeSelected"); } }
-        public Thickness ContentMargin { get; set; } = new Thickness(0.0);
 
         internal RelayCommand RcClick { get; set; }
         internal RelayCommand RcRightClick { get; set; }
+        internal RelayCommand RcDoubleClick { get; set; }
 
         public Action Click;
         public Action RightClick;
+        public Action DoubleClick;
 
         private void OnClick()
         {
@@ -70,12 +71,18 @@ namespace Nemont.Explorer.Model
             RightClick?.Invoke();
         }
 
+        private void OnDoubleClick()
+        {
+            DoubleClick?.Invoke();
+        }
+
         protected EvBase(string name)
         {
             Name = name;
 
             RcClick = new RelayCommand(OnClick);
             RcRightClick = new RelayCommand(OnRightClick);
+            RcDoubleClick = new RelayCommand(OnDoubleClick);
         }
 
         internal void OnPropertyChanged(string prop)
