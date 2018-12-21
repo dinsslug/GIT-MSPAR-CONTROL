@@ -113,9 +113,10 @@ namespace Nemont.Explorer
                 if (existChk[i] == false) {
                     var name = fileSystems[i].Name;
                     var path = GetRelativePath(Path, fileSystems[i].FullName);
+                    var toolTip = fileSystems[i].FullName;
 
                     if (Directory.Exists(fileSystems[i].FullName)) {
-                        var addFolder = new EvFileFolder(name, path);
+                        var addFolder = new EvFileFolder(name, path) { ToolTip = toolTip };
                         RefreshRecur(addFolder);
                         parent.Sub.Add(addFolder);
                     }
@@ -133,6 +134,7 @@ namespace Nemont.Explorer
                         else {
                             addItem = new EvFile(name, path);
                         }
+                        addItem.ToolTip = toolTip;
                         parent.Sub.Add(addItem);
                     }
                 }

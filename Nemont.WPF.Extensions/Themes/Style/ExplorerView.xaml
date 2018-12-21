@@ -76,6 +76,7 @@
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="Padding" Value="1,0,0,0"/>
+        <!--<Setter Property="ToolTip" Value="{Binding ToolTip}" />-->
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}"/>
         <Setter Property="IsSelected" Value="{Binding IsNodeSelected, Mode=TwoWay}"/>
         <Setter Property="Visibility" Value="{Binding Visibility}" />

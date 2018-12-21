@@ -45,11 +45,13 @@ namespace Nemont.Explorer.Model
     {
         // Binding Variables
         protected string name = "";
+        protected string toolTip = "";
         protected FontWeight fontWeight = FontWeights.Normal;
         protected int status;
         protected bool isNodeSelected = false;
         protected Visibility visibility = Visibility.Visible;
         public string Name { get { return name; } set { name = value; OnPropertyChanged("Name"); } }
+        public string ToolTip { get { return toolTip; } set { toolTip = value; OnPropertyChanged("ToolTip"); } }
         public FontWeight FontWeight { get { return fontWeight; } set { fontWeight = value; OnPropertyChanged("FontWeight"); } }
         public int Status { get { return status; } set { status = value; OnPropertyChanged("Status"); } }
         public bool IsNodeSelected { get { return isNodeSelected; } set { isNodeSelected = value; OnPropertyChanged("IsNodeSelected"); } }
