@@ -102,10 +102,10 @@
                                         <Setter Property="Opacity" Value="0" />
                                         <Style.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Opacity" Value="0.2" />
+                                                <Setter Property="Opacity" Value="0.1" />
                                             </Trigger>
                                             <DataTrigger Binding="{Binding ElementName=BdContent, Path=IsMouseOver}" Value="True">
-                                                <Setter Property="Opacity" Value="0.2" />
+                                                <Setter Property="Opacity" Value="0.1" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
