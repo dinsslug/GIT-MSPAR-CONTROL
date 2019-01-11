@@ -31,14 +31,16 @@ namespace Nemont
             DependencyProperty.RegisterAttached("CanClipboardPaste", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(false));
 
         [Category("Columns")]
-        public bool CanMultipleSortColumns { get { return (bool)GetValue(CanMultipleSortColumnsProperty); } set { SetValue(CanMultipleSortColumnsProperty, value); } }
-        public static readonly DependencyProperty CanMultipleSortColumnsProperty =
-            DependencyProperty.RegisterAttached("CanMultipleSortColumns", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(true));
+        public bool AllowMultipleSortColumns { get { return (bool)GetValue(AllowMultipleSortColumnsProperty); } set { SetValue(AllowMultipleSortColumnsProperty, value); } }
+        public static readonly DependencyProperty AllowMultipleSortColumnsProperty =
+            DependencyProperty.RegisterAttached("AllowMultipleSortColumns", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(true));
 
-        #region OnSorting
+        #region Sorting
+        public int[] SortOrder;
+
         protected override void OnSorting(DataGridSortingEventArgs e)
         {
-            if (CanMultipleSortColumns == false)
+            if (AllowMultipleSortColumns == false)
             {
                 foreach (var c in Columns)
                 {
@@ -61,8 +63,7 @@ namespace Nemont
                 var befSortDesc = new SortDescriptionCollection();
                 var curSortDesc = Items.SortDescriptions;
 
-                foreach (var s in curSortDesc)
-                {
+                foreach (var s in curSortDesc) {
                     befSortDesc.Add(s);
                 }
                 switch (e.Column.SortDirection)
@@ -72,21 +73,27 @@ namespace Nemont
                     default: e.Column.SortDirection = ListSortDirection.Ascending; break;
                 }
                 curSortDesc.Clear();
-                if (e.Column.SortDirection != null)
-                {
+                if (e.Column.SortDirection != null) {
                     curSortDesc.Add(new SortDescription(e.Column.SortMemberPath, (ListSortDirection)e.Column.SortDirection));
                 }
-                foreach (var s in befSortDesc)
-                {
-                    if (s.PropertyName != e.Column.SortMemberPath)
-                    {
+                foreach (var s in befSortDesc) {
+                    if (s.PropertyName != e.Column.SortMemberPath) {
                         curSortDesc.Add(s);
                     }
                 }
-                foreach (var s in curSortDesc)
-                {
+                foreach (var s in curSortDesc) {
                     var idx = Columns.ToList().FindIndex(i => i.SortMemberPath == s.PropertyName);
                     Columns[idx].SortDirection = s.Direction;
+                }
+                SortOrder = new int[Columns.Count];
+                for (int i = 0; i < Columns.Count; i++) {
+                    for (int j = 0; j < curSortDesc.Count; j++) {
+                        var jdx = Convert.ToInt32(curSortDesc[j].PropertyName.Substring(5)) - 1;
+
+                        if (jdx == i) {
+                            SortOrder[i] = j + 1;
+                        }
+                    }
                 }
             }
             e.Handled = true;
