@@ -24,7 +24,7 @@
             <Button Content="Test" Command="{Binding RcTest}" Grid.Row="1" />
         </Grid>
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5" Grid.Column="1">
-            <Nemont:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanClipboardPaste="True">
+            <Nemont:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanClipboardPaste="True" CanUserAddRows="False">
                 <Nemont:DataGrid.Columns>
                     <DataGridTextColumn Header="Header1" Binding="{Binding Value1}"/>
                     <DataGridTextColumn Header="Header2" Binding="{Binding Value2}"/>

@@ -39,6 +39,11 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "5", "DDD"));
             DataList.Add(new Data("Sample4", "3", "EEE"));
 
+            // InitializeExplorer();
+        }
+
+        public void InitializeExplorer()
+        {
             ViewManager = new ViewManager("F:\\TEST", true);
             ViewManager.ExceptExtensions.Add(".txt");
             ViewManager.AddFilter(typeof(EvText), ".txt1");
