@@ -24,18 +24,14 @@ namespace Nemont
 
         public TextBox()
         {
-            Loaded += TextBox_Loaded;
+            Loaded += NemontTextBox_Loaded;
         }
 
-        private new void TextBox_Loaded(object sender, RoutedEventArgs e)
+        private void NemontTextBox_Loaded(object sender, RoutedEventArgs e)
         {
-            base.TextBox_Loaded(sender, e);
+            TextBox_Loaded(sender, e);
 
-            try
-            {
-                CheckTextLength();
-            }
-            catch { }
+            CheckTextLength();
         }
         
         [Category("Common Properties")]
@@ -81,30 +77,29 @@ namespace Nemont
 
         private void CheckTextLength()
         {
-            try
-            {
-                var btnX = Template.FindName("BtnX", this) as Button;
-                var partEmptyDescription = Template.FindName("PART_EmptyDescription", this) as TextBlock;
+            if (Template == null) {
+                return;
+            }
+            var btnClear = (Button)Template.FindName("Btn_Clear", this);
+            var partEmptyDescription = (TextBlock)Template.FindName("PART_EmptyDescription", this);
 
-                if (!Text.Equals(DefaultText) && ClearButtonVisible == true)
-                {
-                    btnX.Visibility = Visibility.Visible;
+            if (btnClear != null) {
+                if (!Text.Equals(DefaultText) && ClearButtonVisible == true) {
+                    btnClear.Visibility = Visibility.Visible;
                 }
-                else
-                {
-                    btnX.Visibility = Visibility.Collapsed;
+                else {
+                    btnClear.Visibility = Visibility.Collapsed;
                 }
+            }
 
-                if (Text == "")
-                {
+            if (partEmptyDescription != null) {
+                if (Text == "") {
                     partEmptyDescription.Visibility = Visibility.Visible;
                 }
-                else
-                {
+                else {
                     partEmptyDescription.Visibility = Visibility.Hidden;
                 }
             }
-            catch { }
         }
     }
 }

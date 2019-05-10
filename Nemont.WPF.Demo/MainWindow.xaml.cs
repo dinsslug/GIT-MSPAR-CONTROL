@@ -34,17 +34,18 @@ namespace Nemont.Demo
         {
             RcTest = new RelayCommand(OnTest);
 
-            DataList.Add(new Data("Sample1", "0", "ZZZ"));
-            DataList.Add(new Data("Sample2", "2", "AAA"));
-            DataList.Add(new Data("Sample3", "5", "DDD"));
-            DataList.Add(new Data("Sample4", "3", "EEE"));
+            DataList.Add(new Data("Sample2", "3", "ZZZ"));
+            DataList.Add(new Data("Sample1", "3", "AAA"));
+            DataList.Add(new Data("Sample2", "5", "DDD"));
+            DataList.Add(new Data("Sample1", "0", "EEE"));
+            DataList.Add(new Data("Sample3", "3", "EEE"));
 
-            // InitializeExplorer();
+            InitializeExplorer();
         }
 
         public void InitializeExplorer()
         {
-            ViewManager = new ViewManager("F:\\TEST", true);
+            ViewManager = new ViewManager("E:\\HNC", true);
             ViewManager.ExceptExtensions.Add(".txt");
             ViewManager.AddFilter(typeof(EvText), ".txt1");
             ViewManager.AddFilter(typeof(EvText), ".txt2");

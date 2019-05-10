@@ -26,9 +26,9 @@
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5" Grid.Column="1">
             <Nemont:DataGrid ItemsSource="{Binding DataList}" AutoGenerateColumns="False" Margin="1" CanClipboardPaste="True" CanUserAddRows="False">
                 <Nemont:DataGrid.Columns>
-                    <DataGridTextColumn Header="Header1" Binding="{Binding Value1}"/>
-                    <DataGridTextColumn Header="Header2" Binding="{Binding Value2}"/>
-                    <DataGridTextColumn Header="Header3" Binding="{Binding Value3}"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
                 </Nemont:DataGrid.Columns>
             </Nemont:DataGrid>
         </Border>
@@ -36,7 +36,7 @@
             <TextBox />
             <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Height="20" />
             <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Width="200" HorizontalAlignment="Right" VerticalContentAlignment="Center" />
-            <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" VerticalScrollBarVisibility="Auto" />
+            <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" AcceptsReturn="True" Height="50" EmptyDescription="입력하세용" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
             <!--<Controls:Spinner Value="{Binding SpinnerValue}" Margin="0,5,0,0" />-->
             <Nemont:Spinner x:Name="spinner" Text="{Binding SpinnerValue}" Margin="0,5,0,0" InputMode="Normal" />
             <Button Content="Button" Margin="0,5,0,0"/>

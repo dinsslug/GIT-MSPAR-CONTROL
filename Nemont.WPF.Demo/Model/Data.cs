@@ -9,20 +9,20 @@ namespace Nemont.Demo.Model
 {
     public class Data : ModelBase
     {
-        private string value1 = "";
-        private string value2 = "";
-        private string value3 = "";
+        private string name = "";
+        private string type = "";
+        private string desc = "";
 
-        public string Value1 { get { return value1; } set { value1 = value; OnPropertyChanged("Value1"); } }
-        public string Value2 { get { return value2; } set { value2 = value; OnPropertyChanged("Value2"); } }
-        public string Value3 { get { return value3; } set { value3 = value; OnPropertyChanged("Value3"); } }
+        public string Name { get { return name; } set { name = value; OnPropertyChanged(nameof(Name)); } }
+        public string Type { get { return type; } set { type = value; OnPropertyChanged(nameof(Type)); } }
+        public string Desc { get { return desc; } set { desc = value; OnPropertyChanged(nameof(Desc)); } }
 
         public Data() { }
         public Data(string value1, string value2, string value3)
         {
-            Value1 = value1;
-            Value2 = value2;
-            Value3 = value3;
+            Name = value1;
+            Type = value2;
+            Desc = value3;
         }
     }
 }

@@ -36,64 +36,87 @@ namespace Nemont
             DependencyProperty.RegisterAttached("AllowMultipleSortColumns", typeof(bool), typeof(DataGrid), new FrameworkPropertyMetadata(true));
 
         #region Sorting
-        public int[] SortOrder;
+        private List<int> BeforeSortOrder;
+        private List<ListSortDirection> BeforeSortDirection;
+        private List<int> AfterSortOrder = new List<int>();
+        private List<ListSortDirection> AfterSortDirection = new List<ListSortDirection>();
 
         protected override void OnSorting(DataGridSortingEventArgs e)
         {
-            if (AllowMultipleSortColumns == false)
-            {
-                foreach (var c in Columns)
-                {
-                    if (c.Equals(e.Column) == false) c.SortDirection = null;
+            if (AllowMultipleSortColumns == false) {
+                foreach (var c in Columns) {
+                    if (c.Equals(e.Column) == false) {
+                        c.SortDirection = null;
+                    }
                 }
-                switch (e.Column.SortDirection)
-                {
-                    case ListSortDirection.Ascending: e.Column.SortDirection = ListSortDirection.Descending; break;
-                    case ListSortDirection.Descending: e.Column.SortDirection = null; break;
-                    default: e.Column.SortDirection = ListSortDirection.Ascending; break;
+                switch (e.Column.SortDirection) {
+                case ListSortDirection.Ascending:
+                    e.Column.SortDirection = ListSortDirection.Descending;
+                    break;
+                case ListSortDirection.Descending:
+                    e.Column.SortDirection = null;
+                    break;
+                default:
+                    e.Column.SortDirection = ListSortDirection.Ascending;
+                    break;
                 }
                 Items.SortDescriptions.Clear();
-                if (e.Column.SortDirection != null)
-                {
+                if (e.Column.SortDirection != null) {
                     Items.SortDescriptions.Add(new SortDescription(e.Column.SortMemberPath, (ListSortDirection)e.Column.SortDirection));
                 }
             }
-            else
-            {
-                var befSortDesc = new SortDescriptionCollection();
-                var curSortDesc = Items.SortDescriptions;
+            else {
+                BeforeSortOrder = new List<int>();
+                BeforeSortDirection = new List<ListSortDirection>();
+                int routedIndex = Columns.IndexOf(e.Column);
+                ListSortDirection? routedDirection;
 
-                foreach (var s in curSortDesc) {
-                    befSortDesc.Add(s);
+                for (int ai = 0; ai < AfterSortOrder.Count; ai++) {
+                    BeforeSortOrder.Add(AfterSortOrder[ai]);
+                    BeforeSortDirection.Add(AfterSortDirection[ai]);
                 }
-                switch (e.Column.SortDirection)
-                {
-                    case ListSortDirection.Ascending: e.Column.SortDirection = ListSortDirection.Descending; break;
-                    case ListSortDirection.Descending: e.Column.SortDirection = null; break;
-                    default: e.Column.SortDirection = ListSortDirection.Ascending; break;
+
+                switch (e.Column.SortDirection) {
+                case ListSortDirection.Ascending:
+                    routedDirection = ListSortDirection.Descending;
+                    break;
+                case ListSortDirection.Descending:
+                    routedDirection = null;
+                    break;
+                default:
+                    routedDirection = ListSortDirection.Ascending;
+                    break;
                 }
-                curSortDesc.Clear();
-                if (e.Column.SortDirection != null) {
-                    curSortDesc.Add(new SortDescription(e.Column.SortMemberPath, (ListSortDirection)e.Column.SortDirection));
+
+                AfterSortOrder = new List<int>();
+                AfterSortDirection = new List<ListSortDirection>();
+                if (routedDirection != null) {
+                    AfterSortOrder.Add(routedIndex);
+                    AfterSortDirection.Add((ListSortDirection)routedDirection);
                 }
-                foreach (var s in befSortDesc) {
-                    if (s.PropertyName != e.Column.SortMemberPath) {
-                        curSortDesc.Add(s);
+                for (int bi = 0; bi < BeforeSortOrder.Count; bi++) {
+                    if (BeforeSortOrder[bi] != routedIndex) {
+                        AfterSortOrder.Add(BeforeSortOrder[bi]);
+                        AfterSortDirection.Add(BeforeSortDirection[bi]);
                     }
                 }
-                foreach (var s in curSortDesc) {
-                    var idx = Columns.ToList().FindIndex(i => i.SortMemberPath == s.PropertyName);
-                    Columns[idx].SortDirection = s.Direction;
-                }
-                SortOrder = new int[Columns.Count];
-                for (int i = 0; i < Columns.Count; i++) {
-                    for (int j = 0; j < curSortDesc.Count; j++) {
-                        var jdx = Convert.ToInt32(curSortDesc[j].PropertyName.Substring(5)) - 1;
+                
+                // 열 컬렉션 순서 재설정
+                for (int c = 0; c < Columns.Count; c++) {
+                    int index = AfterSortOrder.FindIndex(item => item == c);
 
-                        if (jdx == i) {
-                            SortOrder[i] = j + 1;
-                        }
+                    if (index != -1) {
+                        Columns[c].SortDirection = AfterSortDirection[index];
                     }
+                    else {
+                        Columns[c].SortDirection = null;
+                    }
+                }
+
+                // 아이템 정렬 순서 재설정
+                Items.SortDescriptions.Clear();
+                for (int ai = 0; ai < AfterSortOrder.Count; ai++) {
+                    Items.SortDescriptions.Add(new SortDescription(Columns[AfterSortOrder[ai]].SortMemberPath, AfterSortDirection[ai]));
                 }
             }
             e.Handled = true;
@@ -101,7 +124,6 @@ namespace Nemont
         #endregion
 
         #region Clipboard Paste
-
         private static void OnCanExecutePaste(object target, CanExecuteRoutedEventArgs args)
         {
             (target as DataGrid).OnCanExecutePaste(args);
@@ -128,15 +150,13 @@ namespace Nemont
         /// <param name="args"></param>
         protected virtual void OnExecutedPaste(ExecutedRoutedEventArgs args)
         {
-            if (CanClipboardPaste == false)
-            {
+            if (CanClipboardPaste == false) {
                 return;
             }
             // Parse the clipboard data
             List<string[]> data = ClipboardHelper.ParseClipboardData();
 
-            if (data == null)
-            {
+            if (data == null) {
                 return;
             }
 
@@ -150,10 +170,8 @@ namespace Nemont
             int maxDispCol = Columns.Count;
             int dispRow, dispCol, dataRow, dataCol;
 
-            for (dispRow = minDispRow, dataRow = 0; dataRow < data.Count; dispRow++, dataRow++)
-            {
-                if (dispRow >= maxDispRow)
-                {
+            for (dispRow = minDispRow, dataRow = 0; dataRow < data.Count; dispRow++, dataRow++) {
+                if (dispRow >= maxDispRow) {
                     var itemsSourceList = ItemsSource as IList;
                     var addValue = Activator.CreateInstance(Items[0].GetType());
                     maxDispRow++;
@@ -161,18 +179,15 @@ namespace Nemont
                 }
                 BeginEditCommand.Execute(null, this);
 
-                for (dispCol = minDispCol, dataCol = 0; dispCol < maxDispCol && dataCol < data[dataRow].Length; dispCol++, dataCol++)
-                {
+                for (dispCol = minDispCol, dataCol = 0; dispCol < maxDispCol && dataCol < data[dataRow].Length; dispCol++, dataCol++) {
                     DataGridColumn column = ColumnFromDisplayIndex(dispCol);
                     column.OnPastingCellClipboardContent(Items[dispRow], data[dataRow][dataCol]);
 
-                    if (SelectionUnit == DataGridSelectionUnit.CellOrRowHeader || SelectionUnit == DataGridSelectionUnit.Cell)
-                    {
+                    if (SelectionUnit == DataGridSelectionUnit.CellOrRowHeader || SelectionUnit == DataGridSelectionUnit.Cell) {
                         SelectedCells.Add(new DataGridCellInfo(Items[dispRow], Columns[dispCol]));
                     }
                 }
-                if (SelectionUnit == DataGridSelectionUnit.FullRow)
-                {
+                if (SelectionUnit == DataGridSelectionUnit.FullRow) {
                     SelectedItems.Add(Items[dispRow]);
                 }
                 CommitEditCommand.Execute(this, this);
