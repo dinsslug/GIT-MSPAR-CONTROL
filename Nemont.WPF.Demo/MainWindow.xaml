@@ -4,7 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:Nemont.Demo"
-    xmlns:Nemont="urn:nemont-wpf"
+    xmlns:Nemont="urn:nemont-wpf-controls"
     mc:Ignorable="d"
     Title="MainWindow" Width="900" Height="500" UseLayoutRounding="True">
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
@@ -42,6 +42,9 @@
             <Button Content="Button" Margin="0,5,0,0"/>
             <TextBlock Text="{Binding SpinnerValue}" Margin="0,5,0,0" />
             <RepeatButton x:Name="repeatButton" Content="RepeatButton" />
+            <Button Content="Run Progress Type. 1" Command="{Binding RcProgress1}" Margin="0,5,0,0" />
+            <Button Content="Run Progress Type. 2" Command="{Binding RcProgress2}" Margin="0,5,0,0" />
+            <Button Content="Run Message Type. 1" Command="{Binding RcMessage1}" Margin="0,10,0,0" />
         </StackPanel>
     </Grid>
 </Window>

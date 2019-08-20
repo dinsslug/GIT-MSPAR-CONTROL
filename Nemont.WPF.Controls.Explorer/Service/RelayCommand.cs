@@ -5,33 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Nemont.Demo.Services
+namespace Nemont.WPF.Service
 {
-    public class RelayCommand : ICommand
+    internal class RelayCommand : ICommand
     {
-        private readonly Action executeNonParameter;
-        private readonly Action<object> execute;
-        private readonly Predicate<object> canExecute;
+        readonly Action<object> execute;
+        readonly Predicate<object> canExecute;
 
-        // Constructors
-        public RelayCommand(Action execute)
+        readonly Action executeNonParameter;
+
+        public RelayCommand(Action<object> execute) : this(execute, null)
         {
-            if (execute == null) {
-                throw new ArgumentNullException("Execute delegate action is null.");
-            }
-            executeNonParameter = execute;
         }
 
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
             if (execute == null) {
-                throw new ArgumentNullException("Execute delegate action is null.");
+                throw new ArgumentNullException("execute");
             }
+
             this.execute = execute;
             this.canExecute = canExecute;
         }
 
-        public RelayCommand(Action<object> execute) : this(execute, null) { }
+        public RelayCommand(Action execute)
+        {
+            if (execute == null) {
+                throw new ArgumentNullException("execute");
+            }
+
+            executeNonParameter = execute;
+        }
 
         public bool CanExecute(object parameter)
         {

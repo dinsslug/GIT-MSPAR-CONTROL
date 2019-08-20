@@ -34,6 +34,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
@@ -106,16 +110,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nemont.WPF.Extensions\Nemont.WPF.Extensions.csproj">
-      <Project>{a0fd7c08-e443-4452-a74a-b45a46ce1b25}</Project>
-      <Name>Nemont.WPF.Extensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Nemont.WPF\Nemont.WPF.csproj">
-      <Project>{2e613b5d-52ee-4ccb-84e0-d1cc40f80602}</Project>
-      <Name>Nemont.WPF</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Asset\site.png" />
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +121,20 @@
   <ItemGroup>
     <Resource Include="Asset\status_check.png" />
     <Resource Include="Asset\status_undefine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nemont.WPF.AppService\Nemont.WPF.AppService.csproj">
+      <Project>{c1dd49ad-bfb2-44bd-840f-5ab51adf12df}</Project>
+      <Name>Nemont.WPF.AppService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nemont.WPF.Controls.Explorer\Nemont.WPF.Controls.Explorer.csproj">
+      <Project>{a0fd7c08-e443-4452-a74a-b45a46ce1b25}</Project>
+      <Name>Nemont.WPF.Controls.Explorer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nemont.WPF.Controls\Nemont.WPF.Controls.csproj">
+      <Project>{2e613b5d-52ee-4ccb-84e0-d1cc40f80602}</Project>
+      <Name>Nemont.WPF.Controls</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

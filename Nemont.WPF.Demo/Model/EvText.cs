@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nemont.Demo.Model
 {
-    public class EvText : Explorer.Model.EvFile
+    public class EvText : WPF.Controls.Explorer.EvFile
     {
         public EvText(string name, string relativePath) : base(name, relativePath)
         {

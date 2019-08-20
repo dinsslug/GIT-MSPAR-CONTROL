@@ -1,13 +1,15 @@
 ﻿using Nemont.Demo.Model;
 using Nemont.Demo.Services;
-using Nemont.Explorer;
-using Nemont.Explorer.Model;
+using Nemont.WPF.AppService;
+using Nemont.WPF.AppService.Progress;
+using Nemont.WPF.Controls.Explorer;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,10 +31,16 @@ namespace Nemont.Demo
         public double SpinnerValue { get { return spinnerValue; } set { spinnerValue = value; OnPropertyChanged("SpinnerValue"); } }
         public ViewManager ViewManager { get; set; }
         public RelayCommand RcTest { get; set; }
+        public RelayCommand RcProgress1 { get; }
+        public RelayCommand RcProgress2 { get; }
+        public RelayCommand RcMessage1 { get; }
 
         public VMMainWindow()
         {
             RcTest = new RelayCommand(OnTest);
+            RcProgress1 = new RelayCommand(OnProgress1);
+            RcProgress2 = new RelayCommand(OnProgress2);
+            RcMessage1 = new RelayCommand(OnMessage1);
 
             DataList.Add(new Data("Sample2", "3", "ZZZ"));
             DataList.Add(new Data("Sample1", "3", "AAA"));
@@ -41,6 +49,8 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "3", "EEE"));
 
             InitializeExplorer();
+
+            MessageDialog.DefaultWidth = 600;
         }
 
         public void InitializeExplorer()
@@ -67,9 +77,62 @@ namespace Nemont.Demo
             ViewManager.Filtering(FilterMode.All);
         }
 
-        public void OnTest(object param)
+        public void OnTest()
         {
             ViewManager.Filtering(FilterMode.FolderOnly);
+        }
+
+        private void OnProgress1()
+        {
+            ProgressDialog.Run(Progress1);
+        }
+
+        private void OnProgress2()
+        {
+            ProgressDialog.Run(Progress2, true, true);
+        }
+
+        private void OnMessage1()
+        {
+            MessageDialog.Run(Message1);
+        }
+
+        private void Progress1()
+        {
+            ProgressManager.Message = "Running Thread ...";
+
+            for (int i = 0; i < 50; i++) {
+                Thread.Sleep(100);
+            }
+        }
+
+        private void Progress2()
+        {
+            ProgressManager.Message = "Running Thread ...";
+
+            for (int i = 0; i < 1000; i++) {
+                ProgressManager.CancellationToken.ThrowIfCancellationRequested();
+                Thread.Sleep(10);
+
+                ProgressManager.ProgressValue = i / 1000.0;
+                ProgressManager.ProgressText = string.Format("{0}", i);
+            }
+        }
+
+        private void Message1()
+        {
+            SystemLog.Clear();
+
+            for (int i = 0; i < 20; i++) {
+                SystemLog.CancellationToken.ThrowIfCancellationRequested();
+                Thread.Sleep(100);
+
+                if (i > 10) {
+                    throw new Exception("ASDFASDF");
+                }
+
+                SystemLog.WriteLine(string.Format("Line {0}", i + 1));
+            }
         }
     }
 
