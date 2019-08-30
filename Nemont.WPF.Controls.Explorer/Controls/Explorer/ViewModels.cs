@@ -99,6 +99,7 @@ namespace Nemont.WPF.Controls.Explorer
     public class EvItem : EvBase
     {
         public string IconUri { get; set; }
+        public bool IsNodeExpanded { get; set; } = false;
 
         public EvItem(string name, string iconUri) : base(name)
         {

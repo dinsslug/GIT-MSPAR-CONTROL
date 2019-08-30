@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using Nemont.WPF.AppService.Progress;
 using Nemont.WPF.Service;
 
-namespace Nemont.WPF.AppService
+namespace Nemont.WPF.AppService.Threading
 {
     internal class VMProgressDialog : Model.BindingModelBase
     {

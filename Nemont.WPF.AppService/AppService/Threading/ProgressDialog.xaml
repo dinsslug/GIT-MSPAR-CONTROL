@@ -1,9 +1,9 @@
-﻿<Window x:Class="Nemont.WPF.AppService.ProgressDialog"
+﻿<Window x:Class="Nemont.WPF.AppService.Threading.ProgressDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:Nemont.WPF.AppService"
+    xmlns:local="clr-namespace:Nemont.WPF.AppService.Threading"
     mc:Ignorable="d" 
     ResizeMode="CanMinimize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" WindowStyle="None" ShowInTaskbar="False" AllowsTransparency="True" MouseDown="Window_MouseDown" Background="{x:Null}" Loaded="Window_Loaded">
     <Window.TaskbarItemInfo>

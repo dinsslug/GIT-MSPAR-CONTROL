@@ -14,24 +14,31 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Nemont.WPF.Service;
 
-namespace Nemont.WPF.AppService
+namespace Nemont.WPF.AppService.Threading
 {
-    internal class VMMessage : Model.BindingModelBase
+    internal class VMMessageDialog : Model.BindingModelBase
     {
         private string message;
+        private string progressText;
+        private double progressValue;
+        private Visibility progressVisibility = Visibility.Collapsed;
         public string Message { get { return message; } set { message = value; OnPropertyChanged(nameof(Message)); } }
+        public string ProgressText { get { return progressText; } set { progressText = value; OnPropertyChanged(nameof(ProgressText)); } }
+        public double ProgressValue { get { return progressValue; } set { progressValue = value; OnPropertyChanged(nameof(ProgressValue)); } }
+        public Visibility ProgressVisibility { get { return progressVisibility; } set { progressVisibility = value; OnPropertyChanged(nameof(ProgressVisibility)); } }
 
-        public VMMessage() { }
+        public RelayCommand RcClear { get; }
 
-        public void OnClearOutput()
+        public VMMessageDialog()
         {
-            SystemLog.Clear();
+            RcClear = new RelayCommand(OnClear);
         }
 
-        public void OnLogChanged()
+        private void OnClear()
         {
-            Message = SystemLog.Log;
+            Message = "";
         }
     }
 
@@ -40,40 +47,35 @@ namespace Nemont.WPF.AppService
     /// </summary>
     public partial class MessageDialog : Window
     {
-        internal VMMessage ViewModel => DataContext as VMMessage;
+        internal VMMessageDialog ViewModel => DataContext as VMMessageDialog;
 
         private bool isCompleted = false;
-        public bool IsCompleted { get { return isCompleted; } set { isCompleted = value; ButtonCancel.Content = "Close"; } }
+        public bool IsCompleted {
+            get {
+                return isCompleted;
+            }
+            set {
+                isCompleted = value;
+                if (value == true) {
+                    ButtonCancel.Content = "Close";
+                }
+            }
+        }
 
-        public static bool IsWarning;
-        public static ImageSource DefaultIcon;
-        public static double? DefaultWidth;
-        public static double? DefaultHeight;
-
-        internal MessageDialog(VMMessage viewModel)
+        internal MessageDialog(VMMessageDialog viewModel, StartInfo startInfo)
         {
             InitializeComponent();
 
-            Owner = Application.Current.MainWindow;
-
-            if (DefaultIcon != null) {
-                Icon = DefaultIcon;
-            }
-            if (DefaultWidth != null) {
-                Width = (double)DefaultWidth;
-            }
-            if (DefaultHeight != null) {
-                Height = (double)DefaultHeight;
-            }
-
             DataContext = viewModel;
+
+            Owner = startInfo.Owner ?? Owner;
+            Width = startInfo.Width ?? Width;
+            Height = startInfo.Height ?? Height;
+            Title = startInfo.Title ?? Title;
+            ShowInTaskbar = startInfo.ShowInTaskBar ?? ShowInTaskbar;
         }
 
-        public static void Clear()
-        {
-            SystemLog.Clear();
-        }
-
+        /*
         public static void Run(Action action)
         {
             var vMessage = new VMMessage();
@@ -108,6 +110,7 @@ namespace Nemont.WPF.AppService
             }, TaskScheduler.FromCurrentSynchronizationContext());
             wMessage.ShowDialog();
         }
+        */
 
         public void CompleteClose()
         {
@@ -118,15 +121,8 @@ namespace Nemont.WPF.AppService
 
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
-            Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => {
-                TextBox.CaretIndex = TextBox.Text.Length;
-                TextBox.ScrollToEnd();
-            }));
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            SystemLog.SetLogEvent(ViewModel.OnLogChanged);
+            TextBox.CaretIndex = TextBox.Text.Length;
+            TextBox.ScrollToEnd();
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -136,15 +132,6 @@ namespace Nemont.WPF.AppService
             if (IsCompleted == false) {
                 e.Cancel = true;
             }
-        }
-
-        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
-        {
-            if (ButtonCancel.Content.ToString() == "Close") {
-                Close();
-            }
-
-            SystemLog.Cancel();
         }
     }
 }

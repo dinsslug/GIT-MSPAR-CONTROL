@@ -1,9 +1,4 @@
-﻿using Nemont.Demo.Model;
-using Nemont.Demo.Services;
-using Nemont.WPF.AppService;
-using Nemont.WPF.AppService.Progress;
-using Nemont.WPF.Controls.Explorer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -20,6 +15,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Nemont.Demo.Model;
+using Nemont.Demo.Services;
+using Nemont.WPF.AppService.Progress;
+using Nemont.WPF.AppService.Threading;
+using Nemont.WPF.Controls.Explorer;
 
 namespace Nemont.Demo
 {
@@ -34,6 +34,7 @@ namespace Nemont.Demo
         public RelayCommand RcProgress1 { get; }
         public RelayCommand RcProgress2 { get; }
         public RelayCommand RcMessage1 { get; }
+        public RelayCommand RcMessage2 { get; }
 
         public VMMainWindow()
         {
@@ -41,6 +42,7 @@ namespace Nemont.Demo
             RcProgress1 = new RelayCommand(OnProgress1);
             RcProgress2 = new RelayCommand(OnProgress2);
             RcMessage1 = new RelayCommand(OnMessage1);
+            RcMessage2 = new RelayCommand(OnMessage2);
 
             DataList.Add(new Data("Sample2", "3", "ZZZ"));
             DataList.Add(new Data("Sample1", "3", "AAA"));
@@ -49,8 +51,6 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "3", "EEE"));
 
             InitializeExplorer();
-
-            MessageDialog.DefaultWidth = 600;
         }
 
         public void InitializeExplorer()
@@ -84,17 +84,30 @@ namespace Nemont.Demo
 
         private void OnProgress1()
         {
-            ProgressDialog.Run(Progress1);
+            //ProgressDialog.Run(Progress1);
         }
 
         private void OnProgress2()
         {
-            ProgressDialog.Run(Progress2, true, true);
+            //ProgressDialog.Run(Progress2, true, true);
         }
 
         private void OnMessage1()
         {
-            MessageDialog.Run(Message1);
+            var startInfo = new StartInfo() {
+                Owner = Application.Current.MainWindow,
+                Height = 600,
+                Width = 600,
+                IsDialog = true,
+                Title = "Thread 1",
+                ShowInTaskBar = false,
+            };
+            StartManager.RunMessage(Message1, startInfo);
+        }
+
+        private void OnMessage2()
+        {
+            StartManager.RunMessage(Message2);
         }
 
         private void Progress1()
@@ -119,20 +132,84 @@ namespace Nemont.Demo
             }
         }
 
-        private void Message1()
+        private void Message1(MessageTask proc)
         {
-            SystemLog.Clear();
-
-            for (int i = 0; i < 20; i++) {
-                SystemLog.CancellationToken.ThrowIfCancellationRequested();
+            for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
                 Thread.Sleep(100);
 
                 if (i > 10) {
-                    throw new Exception("ASDFASDF");
+                    //proc.IsWarning = true;
+                }
+                if (i > 30) {
+                    //throw new Exception("ASDFASDF");
                 }
 
-                SystemLog.WriteLine(string.Format("Line {0}", i + 1));
+                proc.WriteLine(string.Format("Line {0}", i + 1));
             }
+
+            proc.WriteLine("Run Progress...");
+            proc.InitializeProgress();
+            for (int i = 0; i < 200; i++, proc.ThrowIfCancellationRequested()) {
+                Thread.Sleep(10);
+
+                var p = (i + 1) / 200.0;
+                proc.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
+                proc.SetProgressValue(p);
+            }
+            proc.CompleteProgress();
+
+            for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
+                Thread.Sleep(100);
+
+                proc.WriteLine(string.Format("Line {0}", i + 1));
+            }
+
+            proc.WriteLine("Run Progress...");
+            proc.InitializeProgress();
+            for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
+                Thread.Sleep(100);
+
+                var p = (i + 1) / 20.0;
+                proc.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
+                proc.SetProgressValue(p);
+            }
+            proc.CompleteProgress();
+
+            if (proc.IsWarning == true) {
+                proc.WriteLine("Warning 발생!!!!!");
+            }
+        }
+
+        private void Message2(MessageTask proc)
+        {
+            proc.InitializeProcess();
+
+            var startInfo = proc.Process.StartInfo;
+            startInfo.FileName = "Exec\\TestProgram1.exe";
+            startInfo.WorkingDirectory = "Exec";
+            startInfo.Arguments = "";
+            proc.Process.Start();
+            proc.Process.BeginOutputReadLine();
+            proc.Process.BeginErrorReadLine();
+            proc.Process.WaitForExit();
+
+            for (int i = 0; i < 20; i++) {
+                proc.ThrowIfCancellationRequested();
+                Thread.Sleep(100);
+
+                proc.WriteLine(string.Format("Line {0}", i + 1));
+            }
+
+            proc.InitializeProcess();
+
+            startInfo = proc.Process.StartInfo;
+            startInfo.FileName = "Exec\\TestProgram1.exe";
+            startInfo.WorkingDirectory = "Exec";
+            startInfo.Arguments = "";
+            proc.Process.Start();
+            proc.Process.BeginOutputReadLine();
+            proc.Process.BeginErrorReadLine();
+            proc.Process.WaitForExit();
         }
     }
 
