@@ -17,7 +17,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Nemont.Demo.Model;
 using Nemont.Demo.Services;
-using Nemont.WPF.AppService.Progress;
 using Nemont.WPF.AppService.Threading;
 using Nemont.WPF.Controls.Explorer;
 
@@ -96,40 +95,24 @@ namespace Nemont.Demo
         {
             var startInfo = new StartInfo() {
                 Owner = Application.Current.MainWindow,
-                Height = 600,
-                Width = 600,
-                IsDialog = true,
+                IsDialog = false,
                 Title = "Thread 1",
                 ShowInTaskBar = false,
             };
-            StartManager.RunMessage(Message1, startInfo);
+            Starter.RunMessage(Message1, startInfo);
         }
 
         private void OnMessage2()
         {
-            StartManager.RunMessage(Message2);
+            Starter.RunMessage(Message2);
         }
 
         private void Progress1()
         {
-            ProgressManager.Message = "Running Thread ...";
-
-            for (int i = 0; i < 50; i++) {
-                Thread.Sleep(100);
-            }
         }
 
         private void Progress2()
         {
-            ProgressManager.Message = "Running Thread ...";
-
-            for (int i = 0; i < 1000; i++) {
-                ProgressManager.CancellationToken.ThrowIfCancellationRequested();
-                Thread.Sleep(10);
-
-                ProgressManager.ProgressValue = i / 1000.0;
-                ProgressManager.ProgressText = string.Format("{0}", i);
-            }
         }
 
         private void Message1(MessageTask proc)
@@ -144,8 +127,9 @@ namespace Nemont.Demo
                     //throw new Exception("ASDFASDF");
                 }
 
-                proc.WriteLine(string.Format("Line {0}", i + 1));
+                proc.ReplaceLine(string.Format("Line {0}", i + 1));
             }
+            proc.WriteLine("Complete!");
 
             proc.WriteLine("Run Progress...");
             proc.InitializeProgress();

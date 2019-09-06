@@ -49,11 +49,10 @@
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppService\Threading\MessageTask.cs" />
-    <Compile Include="AppService\Threading\StartManager.cs" />
+    <Compile Include="AppService\Threading\Starter.cs" />
     <Compile Include="AppService\Threading\StartInfo.cs" />
     <Compile Include="Service\Enumerables.cs" />
-    <Compile Include="AppService\Progress\ProgressManager.cs" />
-    <Compile Include="AppService\SystemLog.cs" />
+    <Compile Include="AppService\LogFactory.cs" />
     <Compile Include="Model\BindingModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\RelayCommand.cs" />

@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:Nemont.WPF.AppService.Threading"
     mc:Ignorable="d" 
-    Title="Message" Height="400" Width="400" WindowStartupLocation="CenterOwner" UseLayoutRounding="True">
+    Title="Message" Height="500" Width="500" WindowStartupLocation="CenterOwner" UseLayoutRounding="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

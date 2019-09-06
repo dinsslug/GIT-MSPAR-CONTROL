@@ -11,7 +11,7 @@ using System.Windows.Threading;
 
 namespace Nemont.WPF.AppService.Threading
 {
-    public class MessageTask
+    public class MessageTask : LogFactory
     {
         internal MessageDialog WDialog { get; }
         internal VMMessageDialog VDialog => WDialog.ViewModel;
@@ -36,6 +36,8 @@ namespace Nemont.WPF.AppService.Threading
             Worker.DoWork += Worker_DoWork;
             Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
             Worker.WorkerSupportsCancellation = true;
+
+            SetLogEvent(VDialog.OnMessageChanged);
         }
 
         public void InitializeProgress()
@@ -118,27 +120,6 @@ namespace Nemont.WPF.AppService.Threading
                 Process.Kill();
             }
             Worker.CancelAsync();
-        }
-
-        public void Clear()
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.Message = "";
-            });
-        }
-
-        public void Write(string message)
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.Message += message;
-            });
-        }
-
-        public void WriteLine(string message)
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.Message += message + "\r\n";
-            });
         }
 
         public void SetProgressText(string message)

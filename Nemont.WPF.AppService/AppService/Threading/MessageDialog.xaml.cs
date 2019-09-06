@@ -40,6 +40,11 @@ namespace Nemont.WPF.AppService.Threading
         {
             Message = "";
         }
+
+        public void OnMessageChanged(string source)
+        {
+            Message = source;
+        }
     }
 
     /// <summary>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Nemont.WPF.AppService.Threading
 {
-    public static class StartManager
+    public static class Starter
     {
         public static void RunMessage(Action<MessageTask> method)
         {
