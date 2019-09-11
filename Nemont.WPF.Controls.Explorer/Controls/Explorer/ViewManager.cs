@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Nemont.WPF.Model;
 using Nemont.WPF.Service;
 
@@ -13,11 +15,13 @@ namespace Nemont.WPF.Controls.Explorer
 {
     public class ViewManager : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         // Binding Variables
         private bool autoRefresh = false;
         private ObservableCollection<EvBase> root = new ObservableCollection<EvBase>();
         public bool AutoRefresh { get { return autoRefresh; } set { autoRefresh = value; Watcher.EnableRaisingEvents = value; } }
-        public ObservableCollection<EvBase> Root { get { return root; } set { root = value; OnPropertyChanged("Root"); } }
+        public ObservableCollection<EvBase> Root { get { return root; } set { root = value; OnPropertyChanged(nameof(Root)); } }
 
         // Local Variables
         public string Path { get; set; }
@@ -25,7 +29,9 @@ namespace Nemont.WPF.Controls.Explorer
         private Dictionary<string, FilterInfo> Filter = new Dictionary<string, FilterInfo>();
         private FileSystemWatcher Watcher;
         public List<string> ExceptExtensions = new List<string>();
-        public EvBase SelectedItem { get; set; }
+
+        public Action<EvBase, TreeViewItem, ExplorerView, MouseButtonEventArgs> OnDoubleClick;
+        public Action<EvBase, TreeViewItem, ExplorerView, MouseButtonEventArgs> OnRightClick;
 
         public ViewManager() { }
         public ViewManager(string path, bool autoRefresh)
@@ -35,10 +41,11 @@ namespace Nemont.WPF.Controls.Explorer
             Filter.Add("//", new FilterInfo(typeof(EvFileFolder), -1));
             Filter.Add("*", new FilterInfo(typeof(EvFile), 0));
             Root.Add(new EvFileFolder(Path, ""));
-            Watcher = new FileSystemWatcher();
-            Watcher.Path = Path;
-            Watcher.Filter = "*.*";
-            Watcher.IncludeSubdirectories = true;
+            Watcher = new FileSystemWatcher() {
+                Path = Path,
+                Filter = "*.*",
+                IncludeSubdirectories = true,
+            };
             // Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             // Watcher.Changed += new FileSystemEventHandler(OnChanged);
             Watcher.Created += new FileSystemEventHandler(OnChanged);
@@ -197,6 +204,5 @@ namespace Nemont.WPF.Controls.Explorer
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

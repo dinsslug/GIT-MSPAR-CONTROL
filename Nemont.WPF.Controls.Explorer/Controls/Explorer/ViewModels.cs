@@ -43,6 +43,8 @@ namespace Nemont.WPF.Controls.Explorer
 
     public abstract class EvBase : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         // Binding Variables
         protected string name = "";
         protected string toolTip = "";
@@ -50,56 +52,34 @@ namespace Nemont.WPF.Controls.Explorer
         protected int status;
         protected bool isNodeSelected = false;
         protected Visibility visibility = Visibility.Visible;
-        public string Name { get { return name; } set { name = value; OnPropertyChanged("Name"); } }
-        public string ToolTip { get { return toolTip; } set { toolTip = value; OnPropertyChanged("ToolTip"); } }
-        public FontWeight FontWeight { get { return fontWeight; } set { fontWeight = value; OnPropertyChanged("FontWeight"); } }
-        public int Status { get { return status; } set { status = value; OnPropertyChanged("Status"); } }
-        public bool IsNodeSelected { get { return isNodeSelected; } set { isNodeSelected = value; OnPropertyChanged("IsNodeSelected"); } }
-        public Visibility Visibility { get { return visibility; } set { visibility = value; OnPropertyChanged("Visibility"); } }
 
-        internal RelayCommand RcClick { get; set; }
-        internal RelayCommand RcRightClick { get; set; }
-        internal RelayCommand RcDoubleClick { get; set; }
-
-        internal Action Click = null;
-        internal Action RightClick = null;
-        internal Action DoubleClick = null;
-
-        private void OnClick()
-        {
-            Click?.Invoke();
-        }
-
-        private void OnRightClick()
-        {
-            RightClick?.Invoke();
-        }
-
-        private void OnDoubleClick()
-        {
-            DoubleClick?.Invoke();
-        }
+        public string Name { get { return name; } set { name = value; OnPropertyChanged(nameof(Name)); } }
+        public string ToolTip { get { return toolTip; } set { toolTip = value; OnPropertyChanged(nameof(ToolTip)); } }
+        public FontWeight FontWeight { get { return fontWeight; } set { fontWeight = value; OnPropertyChanged(nameof(FontWeight)); } }
+        public int Status { get { return status; } set { status = value; OnPropertyChanged(nameof(Status)); } }
+        public bool IsNodeSelected { get { return isNodeSelected; } set { isNodeSelected = value; OnPropertyChanged(nameof(IsNodeSelected)); } }
+        public Visibility Visibility { get { return visibility; } set { visibility = value; OnPropertyChanged(nameof(Visibility)); } }
 
         protected EvBase(string name)
         {
             Name = name;
-
-            RcClick = new RelayCommand(OnClick);
-            RcRightClick = new RelayCommand(OnRightClick);
-            RcDoubleClick = new RelayCommand(OnDoubleClick);
         }
 
         public void OnPropertyChanged(string prop)
         {
-            if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(prop)); }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     public class EvItem : EvBase
     {
         public string IconUri { get; set; }
         public bool IsNodeExpanded { get; set; } = false;
+
+        public EvItem(string name) : base(name)
+        {
+            IconUri = "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/icon_empty.png";
+        }
 
         public EvItem(string name, string iconUri) : base(name)
         {
@@ -111,7 +91,7 @@ namespace Nemont.WPF.Controls.Explorer
     {
         public string RelativePath { get; set; }
 
-        public EvFile(string name, string relativePath) : base(name, "pack://application:,,,/Nemont.WPF.Extensions;Component/Asset/icon_default.png")
+        public EvFile(string fileName, string relativePath) : base(fileName, "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/icon_default.png")
         {
             RelativePath = relativePath;
         }
@@ -119,17 +99,19 @@ namespace Nemont.WPF.Controls.Explorer
 
     public class EvFolder : EvBase
     {
+        // Icon
+        public string IconClosedUri { get; set; }
+
+        public string IconOpenedUri { get; set; }
         // Binding Variables
         protected ObservableCollection<EvBase> sub = new ObservableCollection<EvBase>();
         protected bool isNodeExpanded = false;
-        public ObservableCollection<EvBase> Sub { get { return sub; } set { sub = value; OnPropertyChanged("Children"); } }
-        public bool IsNodeExpanded { get { return isNodeExpanded; } set { isNodeExpanded = value; OnPropertyChanged("IsNodeExpanded"); } }
+        public ObservableCollection<EvBase> Sub { get { return sub; } set { sub = value; OnPropertyChanged(nameof(Children)); } }
+        public bool IsNodeExpanded { get { return isNodeExpanded; } set { isNodeExpanded = value; OnPropertyChanged(nameof(IsNodeExpanded)); } }
 
-        // Icon
-        public string IconClosedUri { get; set; }
-        public string IconOpenedUri { get; set; }
+        public EvBase this[int index] { get { return Sub[index]; } set { Sub[index] = value; } }
 
-        public IList Children { get { return new CompositeCollection() { new CollectionContainer() { Collection = Sub } }; } }
+        public IList Children => new CompositeCollection() { new CollectionContainer() { Collection = Sub } };
 
         public EvFolder(string name) : base(name) { }
     }
@@ -138,7 +120,7 @@ namespace Nemont.WPF.Controls.Explorer
     {
         public string RelativePath { get; set; }
 
-        public EvFileFolder(string name, string relativePath) : base(name)
+        public EvFileFolder(string folderName, string relativePath) : base(folderName)
         {
             RelativePath = relativePath;
 

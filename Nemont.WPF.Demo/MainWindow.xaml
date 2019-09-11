@@ -18,9 +18,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Nemont:ExplorerView x:Name="ExplorerView" ItemsSource="{Binding ViewManager.Root}"
-                                 MouseRightButtonUp="ExplorerView_MouseRightButtonUp"
-                                 MouseDoubleClick="ExplorerView_MouseDoubleClick" />
+            <Nemont:ExplorerView x:Name="ExplorerView" Manager="{Binding ViewManager}"/>
             <Button Content="Test" Command="{Binding RcTest}" Grid.Row="1" />
         </Grid>
         <Border BorderBrush="#FF787878" BorderThickness="1" Margin="5" Grid.Column="1">

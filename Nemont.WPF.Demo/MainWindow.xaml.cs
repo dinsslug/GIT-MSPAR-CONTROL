@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using Nemont.Demo.Model;
 using Nemont.Demo.Services;
 using Nemont.WPF.AppService.Threading;
+using Nemont.WPF.Controls;
 using Nemont.WPF.Controls.Explorer;
 
 namespace Nemont.Demo
@@ -74,6 +75,13 @@ namespace Nemont.Demo
             (ViewManager.Root[0] as EvFolder).Sub.Insert(0, folder1);
 
             ViewManager.Filtering(FilterMode.All);
+
+            ViewManager.OnDoubleClick = OnDoubleClick;
+        }
+
+        public void OnDoubleClick(EvBase item, TreeViewItem tItem, ExplorerView view, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("ASDFF");
         }
 
         public void OnTest()
@@ -207,32 +215,6 @@ namespace Nemont.Demo
             InitializeComponent();
 
             DataContext = new VMMainWindow();
-        }
-
-        private void ExplorerView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            var treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
-
-            if (treeViewItem != null) {
-                MessageBox.Show("Right click");
-            }
-        }
-
-        private void ExplorerView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
-
-            if (treeViewItem != null) {
-
-            }
-        }
-
-        private TreeViewItem VisualUpwardSearch(DependencyObject source)
-        {
-            while (source != null && !(source is TreeViewItem)) {
-                source = VisualTreeHelper.GetParent(source);
-            }
-            return source as TreeViewItem;
         }
     }
 }
