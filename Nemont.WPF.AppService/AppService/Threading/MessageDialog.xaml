@@ -4,8 +4,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:Nemont.WPF.AppService.Threading"
+    xmlns:s="clr-namespace:Nemont.WPF.Service"
     mc:Ignorable="d" 
     Title="Message" Height="500" Width="500" WindowStartupLocation="CenterOwner" UseLayoutRounding="True">
+    <Window.Resources>
+        <s:BoolCollapsedConverter x:Key="BCConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,6 +28,14 @@
             <ProgressBar Value="{Binding ProgressValue}" Maximum="1" SmallChange="0.0001" Height="12" Margin="7,7,7,0" />
             <TextBlock Text="{Binding ProgressText, FallbackValue=ProgressText}" HorizontalAlignment="Right" Margin="7,5,7,7" Foreground="#FF3C3C3C" />
         </StackPanel>
-        <Button x:Name="ButtonCancel" Content="Cancel" Width="80" Grid.Row="3" HorizontalAlignment="Right" Margin="0,10,10,10" />
+        <Grid Width="90" Grid.Row="3" Margin="0,10,10,10" HorizontalAlignment="Right">
+            <Button x:Name="ButtonClose" Content="Close" Click="ButtonClose_Click" />
+            <Button x:Name="ButtonCancel" Click="ButtonCancel_Click" Visibility="{Binding IsProcessMode, Converter={StaticResource BCConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Nemont.WPF.AppService;component/Asset/stop.png" Width="16" Height="16" SnapsToDevicePixels="True" VerticalAlignment="Center" />
+                    <TextBlock Text="Cancel" Margin="3,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

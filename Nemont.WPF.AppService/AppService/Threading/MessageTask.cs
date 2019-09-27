@@ -11,13 +11,12 @@ using System.Windows.Threading;
 
 namespace Nemont.WPF.AppService.Threading
 {
-    public class MessageTask : LogFactory
+    public class MessageTask 
     {
-        internal MessageDialog WDialog { get; }
-        internal VMMessageDialog VDialog => WDialog.ViewModel;
+        public delegate void RaiseProcessChangedHandler(string line);
+        public event RaiseProcessChangedHandler OnProcessChanged;
 
         public bool IsWarning = false;
-
         public Process Process;
         public string ProcessLog;
 
@@ -27,33 +26,11 @@ namespace Nemont.WPF.AppService.Threading
 
         internal Exception Exception;
 
-        internal MessageTask(MessageDialog window)
+        internal MessageTask()
         {
-            WDialog = window;
-            WDialog.ButtonCancel.Click += ButtonCancel_Click;
-
             Worker = new BackgroundWorker();
             Worker.DoWork += Worker_DoWork;
-            Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
             Worker.WorkerSupportsCancellation = true;
-
-            SetLogEvent(VDialog.OnMessageChanged);
-        }
-
-        public void InitializeProgress()
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.ProgressVisibility = Visibility.Visible;
-                VDialog.ProgressText = "";
-                VDialog.ProgressValue = 0.0;
-            });
-        }
-
-        public void CompleteProgress()
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.ProgressVisibility = Visibility.Collapsed;
-            });
         }
 
         public void InitializeProcess()
@@ -78,7 +55,7 @@ namespace Nemont.WPF.AppService.Threading
 
         private void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            WriteLine(outLine.Data);
+            OnProcessChanged?.Invoke(outLine.Data);
 
             ProcessLog += outLine.Data + "\r\n";
         }
@@ -93,27 +70,6 @@ namespace Nemont.WPF.AppService.Threading
             }
         }
 
-        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            WorkerCompleteAction?.Invoke();
-
-            if (Exception == null) {
-                WDialog.IsCompleted = true;
-                if (IsWarning == false) {
-                    WDialog.Close();
-                }
-            }
-            else {
-                if (Exception is TaskCanceledException) {
-                    WDialog.CompleteClose();
-                }
-                WriteLine("\r\nTHE PROCESS ABORTED DUE TO AN ERROR.\r\nERROR : " + Exception.Message);
-                WriteLine(Exception.StackTrace);
-
-                WDialog.IsCompleted = true;
-            }
-        }
-
         public void OnStopProcess()
         {
             if (Process != null && Process.HasExited == false) {
@@ -122,34 +78,11 @@ namespace Nemont.WPF.AppService.Threading
             Worker.CancelAsync();
         }
 
-        public void SetProgressText(string message)
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.ProgressText = message;
-            });
-        }
-
-        public void SetProgressValue(double value)
-        {
-            WDialog.Dispatcher.Invoke(() => {
-                VDialog.ProgressValue = value;
-            });
-        }
-
         public void ThrowIfCancellationRequested()
         {
             if (Worker.CancellationPending == true) {
                 throw new TaskCanceledException();
             }
-        }
-
-        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
-        {
-            if (WDialog.ButtonCancel.Content.ToString() == "Close") {
-                WDialog.Close();
-            }
-
-            OnStopProcess();
         }
     }
 }

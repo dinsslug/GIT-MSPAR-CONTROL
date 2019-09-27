@@ -16,9 +16,9 @@ namespace Nemont.WPF.AppService.Threading
 
         public static void RunMessage(Action<MessageTask> method, StartInfo startInfo)
         {
-            var vMessage = new VMMessageDialog();
-            var wMessage = new MessageDialog(vMessage, startInfo);
-            var proc = new MessageTask(wMessage);
+            var vMessage = new DMessageDialog();
+            var wMessage = new MessageDialog(vMessage);
+            var proc = new MessageTask();
 
             proc.WorkerAction = new Action(() => {
                 try {

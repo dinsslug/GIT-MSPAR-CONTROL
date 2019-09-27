@@ -45,12 +45,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppService\LogDialogFactory.cs" />
     <Compile Include="AppService\Threading\MessageDialog.xaml.cs">
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppService\Threading\MessageTask.cs" />
     <Compile Include="AppService\Threading\Starter.cs" />
     <Compile Include="AppService\Threading\StartInfo.cs" />
+    <Compile Include="Service\Converters.cs" />
     <Compile Include="Service\Enumerables.cs" />
     <Compile Include="AppService\LogFactory.cs" />
     <Compile Include="Model\BindingModelBase.cs" />
@@ -70,6 +72,8 @@
   <ItemGroup>
     <Resource Include="Asset\clear.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Asset\stop.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Nemont.Demo.Model;
 using Nemont.Demo.Services;
 using Nemont.WPF.AppService.Threading;
@@ -30,7 +32,7 @@ namespace Nemont.Demo
         public ObservableCollection<Data> DataList { get { return dataList; } set { dataList = value; OnPropertyChanged("DataList"); } }
         public double SpinnerValue { get { return spinnerValue; } set { spinnerValue = value; OnPropertyChanged("SpinnerValue"); } }
         public ViewManager ViewManager { get; set; }
-        public RelayCommand RcTest { get; set; }
+        public RelayCommand RcTest { get; }
         public RelayCommand RcProgress1 { get; }
         public RelayCommand RcProgress2 { get; }
         public RelayCommand RcMessage1 { get; }
@@ -51,11 +53,13 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample3", "3", "EEE"));
 
             InitializeExplorer();
+
+            App.Log = new WPF.AppService.LogDialogFactory();
         }
 
         public void InitializeExplorer()
         {
-            ViewManager = new ViewManager("E:\\홈 공유", true);
+            ViewManager = new ViewManager("E:\\HNC", true);
             ViewManager.ExceptExtensions.Add(".txt");
             ViewManager.AddFilter(typeof(EvText), ".txt1");
             ViewManager.AddFilter(typeof(EvText), ".txt2");
@@ -94,12 +98,69 @@ namespace Nemont.Demo
 
         public void OnTest()
         {
-            ViewManager.Filtering(FilterMode.FolderOnly);
+            App.Log.UpdateInterval = 10;
+            var sw = new Stopwatch();
+            sw.Start();
+            for (int i = 0; i < 500; i++) {
+                Thread.Sleep(10);
+
+                App.Log.ReplaceLine(string.Format("Line {0}", i + 1));
+            }
+            sw.Stop();
+            App.Log.WriteLine("RUN TIME : " + sw.ElapsedMilliseconds);
+
+            App.Log.Flush();
+            //ViewManager.Filtering(FilterMode.FolderOnly);
         }
 
         private void OnProgress1()
         {
-            //ProgressDialog.Run(Progress1);
+            App.Log.UpdateInterval = 50;
+            App.Log.InitializeProgress();
+
+            for (int i = 0; i < 20; i++) {
+                Thread.Sleep(100);
+
+                if (i > 10) {
+                    //proc.IsWarning = true;
+                }
+                if (i > 30) {
+                    //throw new Exception("ASDFASDF");
+                }
+
+                App.Log.ReplaceLine(string.Format("Line {0}", i + 1));
+            }
+            App.Log.WriteLine("Complete!");
+
+            App.Log.WriteLine("Run Progress...");
+            App.Log.InitializeProgress();
+            for (int i = 0; i < 200; i++) {
+                Thread.Sleep(10);
+
+                var p = (i + 1) / 200.0;
+                App.Log.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
+                App.Log.SetProgressValue(p);
+            }
+            App.Log.CompleteProgress();
+
+            for (int i = 0; i < 20; i++) {
+                Thread.Sleep(100);
+
+                App.Log.WriteLine(string.Format("Line {0}", i + 1));
+            }
+
+            App.Log.WriteLine("Run Progress...");
+            App.Log.InitializeProgress();
+            for (int i = 0; i < 20; i++) {
+                Thread.Sleep(100);
+
+                var p = (i + 1) / 20.0;
+                App.Log.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
+                App.Log.SetProgressValue(p);
+            }
+            App.Log.CompleteProgress();
+
+            App.Log.Flush();
         }
 
         private void OnProgress2()
@@ -115,7 +176,7 @@ namespace Nemont.Demo
                 Title = "Thread 1",
                 ShowInTaskBar = false,
             };
-            Starter.RunMessage(Message1, startInfo);
+            App.Log.RunTask(Message1);
         }
 
         private void OnMessage2()
@@ -143,40 +204,40 @@ namespace Nemont.Demo
                     //throw new Exception("ASDFASDF");
                 }
 
-                proc.ReplaceLine(string.Format("Line {0}", i + 1));
+                App.Log.ReplaceLine(string.Format("Line {0}", i + 1));
             }
-            proc.WriteLine("Complete!");
+            App.Log.WriteLine("Complete!");
 
-            proc.WriteLine("Run Progress...");
-            proc.InitializeProgress();
+            App.Log.WriteLine("Run Progress...");
+            App.Log.InitializeProgress();
             for (int i = 0; i < 200; i++, proc.ThrowIfCancellationRequested()) {
                 Thread.Sleep(10);
 
                 var p = (i + 1) / 200.0;
-                proc.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
-                proc.SetProgressValue(p);
+                App.Log.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
+                App.Log.SetProgressValue(p);
             }
-            proc.CompleteProgress();
+            App.Log.CompleteProgress();
 
             for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
                 Thread.Sleep(100);
 
-                proc.WriteLine(string.Format("Line {0}", i + 1));
+                App.Log.WriteLine(string.Format("Line {0}", i + 1));
             }
 
-            proc.WriteLine("Run Progress...");
-            proc.InitializeProgress();
+            App.Log.WriteLine("Run Progress...");
+            App.Log.InitializeProgress();
             for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
                 Thread.Sleep(100);
 
                 var p = (i + 1) / 20.0;
-                proc.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
-                proc.SetProgressValue(p);
+                App.Log.SetProgressText(string.Format("Progress {0:0.0}%", p * 100.0));
+                App.Log.SetProgressValue(p);
             }
-            proc.CompleteProgress();
+            App.Log.CompleteProgress();
 
             if (proc.IsWarning == true) {
-                proc.WriteLine("Warning 발생!!!!!");
+                App.Log.WriteLine("Warning 발생!!!!!");
             }
         }
 
@@ -197,7 +258,7 @@ namespace Nemont.Demo
                 proc.ThrowIfCancellationRequested();
                 Thread.Sleep(100);
 
-                proc.WriteLine(string.Format("Line {0}", i + 1));
+                App.Log.WriteLine(string.Format("Line {0}", i + 1));
             }
 
             proc.InitializeProcess();
@@ -223,6 +284,11 @@ namespace Nemont.Demo
             InitializeComponent();
 
             DataContext = new VMMainWindow();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            App.Log.CloseDialog();
         }
     }
 }
