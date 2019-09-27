@@ -23,7 +23,7 @@ namespace Nemont.WPF.Service
         }
     }
 
-    internal class StatusIconConverter : IValueConverter
+    public class StatusIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -41,7 +41,7 @@ namespace Nemont.WPF.Service
         }
     }
 
-    internal class IconConverter : IValueConverter
+    public class IconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

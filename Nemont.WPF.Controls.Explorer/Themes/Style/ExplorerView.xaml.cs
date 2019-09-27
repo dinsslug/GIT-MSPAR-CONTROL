@@ -12,23 +12,6 @@ namespace Nemont.WPF.Themes.Style
 {
     public partial class ExplorerView
     {
-        private void TreeViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
-
-            if (treeViewItem != null) {
-                treeViewItem.Focus();
-            }
-        }
-
-        private TreeViewItem VisualUpwardSearch(DependencyObject source)
-        {
-            while (source != null && !(source is TreeViewItem)) {
-                source = VisualTreeHelper.GetParent(source);
-            }
-            return source as TreeViewItem;
-        }
-
         private void ToggleButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;

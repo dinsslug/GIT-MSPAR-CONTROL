@@ -77,11 +77,19 @@ namespace Nemont.Demo
             ViewManager.Filtering(FilterMode.All);
 
             ViewManager.OnDoubleClick = OnDoubleClick;
+            ViewManager.OnRightClick = OnRighteClick;
         }
 
         public void OnDoubleClick(EvBase item, TreeViewItem tItem, ExplorerView view, MouseButtonEventArgs e)
         {
-            MessageBox.Show("ASDFF");
+            MessageBox.Show("Double Clicked");
+        }
+
+        public void OnRighteClick(EvBase item, TreeViewItem tItem, ExplorerView view, MouseButtonEventArgs e)
+        {
+            tItem.ContextMenu = new ContextMenu();
+
+            tItem.ContextMenu.Items.Add(new MenuItem() { Header = item.Name, });
         }
 
         public void OnTest()
