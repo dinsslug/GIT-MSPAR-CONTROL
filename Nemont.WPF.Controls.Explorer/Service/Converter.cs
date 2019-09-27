@@ -27,11 +27,18 @@ namespace Nemont.WPF.Service
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            var index = System.Convert.ToInt32(value);
+            var uri = StatusManager.Status[index];
+            var defaultUri = "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/status_empty.png";
+
             try {
-                return new BitmapImage(new Uri(StatusManager.Status[(int)value]));
+                if (!string.IsNullOrEmpty(uri) && Uri.IsWellFormedUriString(uri, UriKind.RelativeOrAbsolute)) {
+                    return new BitmapImage(new Uri(uri));
+                }
+                return new BitmapImage(new Uri(defaultUri));
             }
             catch {
-                return new BitmapImage(new Uri("pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/status_empty.png"));
+                return new BitmapImage(new Uri(defaultUri));
             }
         }
 
@@ -45,11 +52,17 @@ namespace Nemont.WPF.Service
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            var uri = value.ToString();
+            var defaultUri = "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/icon_empty.png";
+            
             try {
-                return new BitmapImage(new Uri(value.ToString()));
+                if (!string.IsNullOrEmpty(uri) && Uri.IsWellFormedUriString(uri, UriKind.RelativeOrAbsolute)) {
+                    return new BitmapImage(new Uri(uri));
+                }
+                return new BitmapImage(new Uri(defaultUri));
             }
             catch {
-                return new BitmapImage(new Uri("pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/icon_empty.png"));
+                return new BitmapImage(new Uri(defaultUri));
             }
         }
 

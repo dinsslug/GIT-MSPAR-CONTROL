@@ -55,7 +55,7 @@ namespace Nemont.Demo
 
         public void InitializeExplorer()
         {
-            ViewManager = new ViewManager("E:\\HNC", true);
+            ViewManager = new ViewManager("E:\\홈 공유", true);
             ViewManager.ExceptExtensions.Add(".txt");
             ViewManager.AddFilter(typeof(EvText), ".txt1");
             ViewManager.AddFilter(typeof(EvText), ".txt2");
