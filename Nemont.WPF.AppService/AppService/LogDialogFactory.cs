@@ -19,7 +19,7 @@ namespace Nemont.WPF.AppService
 
         private DMessageDialog DMessageDialog;
         private MessageDialog WMessageDialog;
-        private bool IsDialog = false;
+        private bool IsShowDialog = false;
 
         private string progressText;
         private string ProgressText {
@@ -28,11 +28,8 @@ namespace Nemont.WPF.AppService
                 progressText = value;
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
-                    if (IsDialog == false) {
+                    if (IsShowDialog == false) {
                         Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
-                    }
-                    else {
-                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.ShowDialog());
                     }
 
                     OnProgressChanged?.Invoke(value, ProgressValue);
@@ -47,11 +44,8 @@ namespace Nemont.WPF.AppService
                 progressValue = value;
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
-                    if (IsDialog == false) {
+                    if (IsShowDialog == false) {
                         Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
-                    }
-                    else {
-                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.ShowDialog());
                     }
 
                     OnProgressChanged?.Invoke(ProgressText, value);
@@ -67,11 +61,8 @@ namespace Nemont.WPF.AppService
                 log = value;
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
-                    if (IsDialog == false) {
+                    if (IsShowDialog == false) {
                         Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
-                    }
-                    else {
-                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.ShowDialog());
                     }
 
                     OnLogChanged?.Invoke(value);
@@ -109,6 +100,10 @@ namespace Nemont.WPF.AppService
             WMessageDialog.ButtonCancel.Click += (sender, e) => Task.OnStopProcess();
 
             base.RunTask(method);
+
+            if (IsShowDialog == true) {
+                WMessageDialog.ShowDialog();
+            }
         }
 
         protected override void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -157,7 +152,7 @@ namespace Nemont.WPF.AppService
             WMessageDialog.Height = dialogStartInfo.Height ?? WMessageDialog.Height;
             WMessageDialog.Title = dialogStartInfo.Title ?? WMessageDialog.Title;
             WMessageDialog.ShowInTaskbar = dialogStartInfo.ShowInTaskBar ?? WMessageDialog.ShowInTaskbar;
-            IsDialog = dialogStartInfo.IsDialog;
+            IsShowDialog = dialogStartInfo.IsDialog;
         }
 
         /// <summary>
