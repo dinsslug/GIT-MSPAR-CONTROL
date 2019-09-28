@@ -11,12 +11,15 @@ using System.Windows.Threading;
 
 namespace Nemont.WPF.AppService.Threading
 {
+    internal delegate void RaiseProcessChangedHandler(string line);
+
     public class MessageTask 
     {
-        public delegate void RaiseProcessChangedHandler(string line);
-        public event RaiseProcessChangedHandler OnProcessChanged;
+        internal event RaiseProcessChangedHandler OnProcessChanged;
 
         public bool IsWarning = false;
+        public bool IsCompleted = false;
+        public bool IsBusy => Worker.IsBusy;
         public Process Process;
         public string ProcessLog;
 

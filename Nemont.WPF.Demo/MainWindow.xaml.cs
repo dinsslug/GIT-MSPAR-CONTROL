@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Nemont.Demo.Model;
 using Nemont.Demo.Services;
+using Nemont.WPF.AppService;
 using Nemont.WPF.AppService.Threading;
 using Nemont.WPF.Controls;
 using Nemont.WPF.Controls.Explorer;
@@ -29,17 +30,24 @@ namespace Nemont.Demo
     {
         private ObservableCollection<Data> dataList = new ObservableCollection<Data>();
         private double spinnerValue = 5;
+        private string textThread = "";
         public ObservableCollection<Data> DataList { get { return dataList; } set { dataList = value; OnPropertyChanged("DataList"); } }
         public double SpinnerValue { get { return spinnerValue; } set { spinnerValue = value; OnPropertyChanged("SpinnerValue"); } }
+        public string TextThread { get { return textThread; } set { textThread = value; OnPropertyChanged(nameof(TextThread)); } }
         public ViewManager ViewManager { get; set; }
+        public RelayCommand RcStop { get; }
         public RelayCommand RcTest { get; }
         public RelayCommand RcProgress1 { get; }
         public RelayCommand RcProgress2 { get; }
         public RelayCommand RcMessage1 { get; }
         public RelayCommand RcMessage2 { get; }
 
+        public LogFactory TextLog;
+        public MessageTask TextTask => TextLog.Task;
+
         public VMMainWindow()
         {
+            RcStop = new RelayCommand(OnStop);
             RcTest = new RelayCommand(OnTest);
             RcProgress1 = new RelayCommand(OnProgress1);
             RcProgress2 = new RelayCommand(OnProgress2);
@@ -52,9 +60,22 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample1", "0", "EEE"));
             DataList.Add(new Data("Sample3", "3", "EEE"));
 
-            InitializeExplorer();
+            //InitializeExplorer();
 
-            App.Log = new WPF.AppService.LogDialogFactory();
+            App.Log = new LogDialogFactory();
+
+            TextLog = new LogFactory();
+            TextLog.OnLogChanged += TextLog_OnLogChanged;
+        }
+
+        private void TextLog_OnLogChanged(string log)
+        {
+            TextThread = log;
+        }
+
+        private void OnStop()
+        {
+            TextLog.StopTask();
         }
 
         public void InitializeExplorer()
@@ -81,7 +102,7 @@ namespace Nemont.Demo
             ViewManager.Filtering(FilterMode.All);
 
             ViewManager.OnDoubleClick = OnDoubleClick;
-            ViewManager.OnRightClick = OnRighteClick;
+            ViewManager.OnRightClick = OnRightClick;
         }
 
         public void OnDoubleClick(EvBase item, TreeViewItem tItem, ExplorerView view, MouseButtonEventArgs e)
@@ -89,7 +110,7 @@ namespace Nemont.Demo
             MessageBox.Show("Double Clicked");
         }
 
-        public void OnRighteClick(EvBase item, TreeViewItem tItem, ExplorerView view, MouseButtonEventArgs e)
+        public void OnRightClick(EvBase item, TreeViewItem tItem, ExplorerView view, MouseButtonEventArgs e)
         {
             tItem.ContextMenu = new ContextMenu();
 
@@ -98,7 +119,7 @@ namespace Nemont.Demo
 
         public void OnTest()
         {
-            App.Log.UpdateInterval = 10;
+            App.Log.UpdateIntervalTime = 100;
             var sw = new Stopwatch();
             sw.Start();
             for (int i = 0; i < 500; i++) {
@@ -115,7 +136,7 @@ namespace Nemont.Demo
 
         private void OnProgress1()
         {
-            App.Log.UpdateInterval = 50;
+            App.Log.UpdateIntervalTime = 50;
             App.Log.InitializeProgress();
 
             for (int i = 0; i < 20; i++) {
@@ -172,16 +193,17 @@ namespace Nemont.Demo
         {
             var startInfo = new StartInfo() {
                 Owner = Application.Current.MainWindow,
-                IsDialog = false,
+                IsDialog = true,
                 Title = "Thread 1",
                 ShowInTaskBar = false,
             };
+            App.Log.SetDialogInfo(startInfo);
             App.Log.RunTask(Message1);
         }
 
         private void OnMessage2()
         {
-            Starter.RunMessage(Message2);
+            TextLog.RunTask(Message2);
         }
 
         private void Progress1()
@@ -192,15 +214,16 @@ namespace Nemont.Demo
         {
         }
 
-        private void Message1(MessageTask proc)
+        private void Message1()
         {
-            for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
+            App.Log.UpdateIntervalTime = 10;
+            for (int i = 0; i < 30; i++, App.Task.ThrowIfCancellationRequested()) {
                 Thread.Sleep(100);
 
                 if (i > 10) {
-                    //proc.IsWarning = true;
+                    App.Task.IsWarning = false;
                 }
-                if (i > 30) {
+                if (i > 25) {
                     //throw new Exception("ASDFASDF");
                 }
 
@@ -210,7 +233,7 @@ namespace Nemont.Demo
 
             App.Log.WriteLine("Run Progress...");
             App.Log.InitializeProgress();
-            for (int i = 0; i < 200; i++, proc.ThrowIfCancellationRequested()) {
+            for (int i = 0; i < 200; i++, App.Task.ThrowIfCancellationRequested()) {
                 Thread.Sleep(10);
 
                 var p = (i + 1) / 200.0;
@@ -219,7 +242,7 @@ namespace Nemont.Demo
             }
             App.Log.CompleteProgress();
 
-            for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
+            for (int i = 0; i < 20; i++, App.Task.ThrowIfCancellationRequested()) {
                 Thread.Sleep(100);
 
                 App.Log.WriteLine(string.Format("Line {0}", i + 1));
@@ -227,7 +250,7 @@ namespace Nemont.Demo
 
             App.Log.WriteLine("Run Progress...");
             App.Log.InitializeProgress();
-            for (int i = 0; i < 20; i++, proc.ThrowIfCancellationRequested()) {
+            for (int i = 0; i < 20; i++, App.Task.ThrowIfCancellationRequested()) {
                 Thread.Sleep(100);
 
                 var p = (i + 1) / 20.0;
@@ -236,41 +259,41 @@ namespace Nemont.Demo
             }
             App.Log.CompleteProgress();
 
-            if (proc.IsWarning == true) {
+            if (App.Task.IsWarning == true) {
                 App.Log.WriteLine("Warning 발생!!!!!");
             }
         }
 
-        private void Message2(MessageTask proc)
+        private void Message2()
         {
-            proc.InitializeProcess();
+            TextTask.InitializeProcess();
 
-            var startInfo = proc.Process.StartInfo;
+            var startInfo = TextTask.Process.StartInfo;
             startInfo.FileName = "Exec\\TestProgram1.exe";
             startInfo.WorkingDirectory = "Exec";
             startInfo.Arguments = "";
-            proc.Process.Start();
-            proc.Process.BeginOutputReadLine();
-            proc.Process.BeginErrorReadLine();
-            proc.Process.WaitForExit();
+            TextTask.Process.Start();
+            TextTask.Process.BeginOutputReadLine();
+            TextTask.Process.BeginErrorReadLine();
+            TextTask.Process.WaitForExit();
 
             for (int i = 0; i < 20; i++) {
-                proc.ThrowIfCancellationRequested();
+                TextTask.ThrowIfCancellationRequested();
                 Thread.Sleep(100);
 
-                App.Log.WriteLine(string.Format("Line {0}", i + 1));
+                TextLog.WriteLine(string.Format("Line {0}", i + 1));
             }
 
-            proc.InitializeProcess();
+            TextTask.InitializeProcess();
 
-            startInfo = proc.Process.StartInfo;
+            startInfo = TextTask.Process.StartInfo;
             startInfo.FileName = "Exec\\TestProgram1.exe";
             startInfo.WorkingDirectory = "Exec";
             startInfo.Arguments = "";
-            proc.Process.Start();
-            proc.Process.BeginOutputReadLine();
-            proc.Process.BeginErrorReadLine();
-            proc.Process.WaitForExit();
+            TextTask.Process.Start();
+            TextTask.Process.BeginOutputReadLine();
+            TextTask.Process.BeginErrorReadLine();
+            TextTask.Process.WaitForExit();
         }
     }
 
@@ -289,6 +312,12 @@ namespace Nemont.Demo
         private void Window_Closed(object sender, EventArgs e)
         {
             App.Log.CloseDialog();
+        }
+
+        private void TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox.CaretIndex = TextBox.Text.Length;
+            TextBox.ScrollToEnd();
         }
     }
 }

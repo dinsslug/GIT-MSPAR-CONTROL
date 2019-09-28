@@ -68,18 +68,7 @@ namespace Nemont.WPF.AppService.Threading
     {
         internal DMessageDialog ViewModel => DataContext as DMessageDialog;
 
-        private bool isCompleted = false;
-        public bool IsCompleted {
-            get {
-                return isCompleted;
-            }
-            set {
-                isCompleted = value;
-                if (value == true) {
-                    ViewModel.IsProcessMode = false;
-                }
-            }
-        }
+        private bool IsForceCloseActivated = false;
 
         internal MessageDialog(DMessageDialog viewModel)
         {
@@ -88,46 +77,9 @@ namespace Nemont.WPF.AppService.Threading
             DataContext = viewModel;
         }
 
-        /*
-        public static void Run(Action action)
+        public void ForceClose()
         {
-            var vMessage = new VMMessage();
-            var wMessage = new MessageDialog(vMessage);
-            Exception exception = null;
-            IsWarning = false;
-
-            Task.Factory.StartNew(() => {
-                try {
-                    action();
-                }
-                catch (Exception ex) {
-                    exception = ex;
-
-                    return;
-                }
-            }).ContinueWith(w => {
-                if (exception == null) {
-                    wMessage.IsCompleted = true;
-                    if (IsWarning == false) {
-                        wMessage.Close();
-                    }
-                }
-                else {
-                    if (exception is OperationCanceledException) {
-                        wMessage.CompleteClose();
-                    }
-                    SystemLog.WriteLine("\r\n에러가 발생하여 작업을 중단했습니다.\r\n오류 : " + exception.Message);
-                    SystemLog.WriteLine(exception.StackTrace);
-                    wMessage.IsCompleted = true;
-                }
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-            wMessage.ShowDialog();
-        }
-        */
-
-        public void CompleteClose()
-        {
-            IsCompleted = true;
+            IsForceCloseActivated = true;
 
             Close();
         }
@@ -142,10 +94,11 @@ namespace Nemont.WPF.AppService.Threading
         {
             base.OnClosing(e);
 
-            if (IsCompleted == false) {
+            Hide();
+
+            if (IsForceCloseActivated == false) {
                 e.Cancel = true;
             }
-            Hide();
         }
 
         private void ButtonClose_Click(object sender, RoutedEventArgs e)

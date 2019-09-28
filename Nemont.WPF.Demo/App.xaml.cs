@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Nemont.WPF.AppService;
+using Nemont.WPF.AppService.Threading;
 
 namespace Nemont.Demo
 {
@@ -15,5 +16,6 @@ namespace Nemont.Demo
     public partial class App : Application
     {
         public static LogDialogFactory Log;
+        public static MessageTask Task => Log.Task;
     }
 }

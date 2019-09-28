@@ -17,11 +17,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Margin="0" Background="#0C000000">
-            <Button Command="{Binding RcClear}" ToolTip="Clear" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" HorizontalAlignment="Left" Focusable="False" Margin="3,0,0,0">
-                <Image Source="/Nemont.WPF.AppService;component/Asset/clear.png" SnapsToDevicePixels="True" Width="16" Height="16" />
-            </Button>
-        </StackPanel>
+        <ToolBarTray>
+            <ToolBar>
+                <Button Command="{Binding RcClear}" ToolTip="Clear" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" HorizontalAlignment="Left" Focusable="False" Margin="3,0,0,0">
+                    <Image Source="/Nemont.WPF.AppService;component/Asset/clear.png" SnapsToDevicePixels="True" Width="16" Height="16" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
         <TextBox x:Name="TextBox" Text="{Binding Message}" Grid.Row="1"
                  TextChanged="TextChanged" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="5,5,5,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
         <StackPanel Visibility="{Binding ProgressVisibility}" Background="WhiteSmoke" Grid.Row="2" Margin="5,5,5,0">

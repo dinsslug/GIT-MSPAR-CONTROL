@@ -50,7 +50,6 @@
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppService\Threading\MessageTask.cs" />
-    <Compile Include="AppService\Threading\Starter.cs" />
     <Compile Include="AppService\Threading\StartInfo.cs" />
     <Compile Include="Service\Converters.cs" />
     <Compile Include="Service\Enumerables.cs" />
@@ -73,7 +72,7 @@
     <Resource Include="Asset\clear.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Asset\stop.png" />
+    <Resource Include="Asset\stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

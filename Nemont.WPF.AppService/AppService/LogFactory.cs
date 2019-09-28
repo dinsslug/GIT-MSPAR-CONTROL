@@ -11,21 +11,27 @@ using Nemont.WPF.AppService.Threading;
 
 namespace Nemont.WPF.AppService
 {
+    public delegate void RaiseLogChangedHandler(string log);
+
     public class LogFactory
     {
-        public delegate void RaiseLogChangedHandler(string log);
         public virtual event RaiseLogChangedHandler OnLogChanged;
-        protected MessageTask Task;
-        
+        public MessageTask Task;
+
+        protected Stopwatch Stopwatch;
+        public int UpdateIntervalTime = 500;
+
         protected string log;
         public virtual string Log {
-            get {
-                return log;
-            }
+            get => log;
             set {
                 log = value;
 
-                OnLogChanged?.Invoke(log);
+                if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
+                    OnLogChanged?.Invoke(value);
+
+                    Stopwatch.Restart();
+                }
             }
         }
 
@@ -47,10 +53,17 @@ namespace Nemont.WPF.AppService
             }
         }
 
-        public LogFactory() { }
-
-        public virtual void RunTask(Action<MessageTask> method)
+        public LogFactory()
         {
+            Stopwatch = new Stopwatch();
+            Stopwatch.Start();
+        }
+
+        public virtual void RunTask(Action method)
+        {
+            if (Task != null && Task.IsBusy == true) {
+                return;
+            }
             Task = new MessageTask();
             Task.OnProcessChanged += (line) => WriteLine(line);
             Task.Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
@@ -63,27 +76,39 @@ namespace Nemont.WPF.AppService
                     Debug.WriteLine("Failed to kill process.");
                 }
 
-                method(Task);
+                method();
             });
             Task.Worker.RunWorkerAsync();
         }
 
         protected virtual void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Task.WorkerCompleteAction?.Invoke();
+            try {
+                Task.WorkerCompleteAction?.Invoke();
 
-            if (Task.Exception == null) {
-                WriteLine("\r\nPROCESS IS COMPLETED");
-            }
-            else {
-                if (Task.Exception is TaskCanceledException) {
-                    WriteLine("\r\nPROCESS IS CANCELED");
-
-                    return;
+                if (Task.Exception == null) {
+                    WriteLine("\r\nPROCESS IS COMPLETED");
                 }
-                WriteLine("\r\nPROCESS ABORTED DUE TO AN ERROR.\r\nERROR : " + Task.Exception.Message);
-                WriteLine(Task.Exception.StackTrace);
+                else {
+                    if (Task.Exception is TaskCanceledException) {
+                        WriteLine("\r\nPROCESS IS CANCELED");
+
+                        return;
+                    }
+                    WriteLine("\r\nPROCESS ABORTED DUE TO AN ERROR.\r\nERROR : " + Task.Exception.Message);
+                    WriteLine(Task.Exception.StackTrace);
+                }
             }
+            finally {
+                Task.IsCompleted = true;
+                Flush();
+                Task = null;
+            }
+        }
+
+        public void StopTask()
+        {
+            Task?.OnStopProcess();
         }
 
         public void Clear()
@@ -123,6 +148,14 @@ namespace Nemont.WPF.AppService
             WriteLine("> " + ex.Message);
             WriteLine("> Stack Trace : ");
             WriteLine(ex.StackTrace + "\r\n");
+        }
+
+        /// <summary>
+        /// 작업 중단 또는 종료 시 표시되지 않은 로그를 모두 출력하도록 인보크를 수행합니다.
+        /// </summary>
+        public virtual void Flush()
+        {
+            OnLogChanged?.Invoke(log);
         }
     }
 }

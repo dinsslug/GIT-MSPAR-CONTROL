@@ -10,31 +10,29 @@ using Nemont.WPF.AppService.Threading;
 
 namespace Nemont.WPF.AppService
 {
+    internal delegate void RaiseProgressChangedHandler(string text, double value);
+
     public class LogDialogFactory : LogFactory
     {
-        public delegate void RaiseProgressChangedHandler(string text, double value);
         public override event RaiseLogChangedHandler OnLogChanged;
-        public event RaiseProgressChangedHandler OnProgressChanged;
+        internal event RaiseProgressChangedHandler OnProgressChanged;
 
         private DMessageDialog DMessageDialog;
         private MessageDialog WMessageDialog;
-        private Stopwatch Stopwatch;
-
-        public int UpdateInterval = 500;
         private bool IsDialog = false;
 
         private string progressText;
-        public string ProgressText {
+        private string ProgressText {
             get => progressText;
             set {
                 progressText = value;
 
-                if (Stopwatch.ElapsedMilliseconds > UpdateInterval) {
+                if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
                     if (IsDialog == false) {
-                        WMessageDialog.Show();
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
                     }
                     else {
-                        WMessageDialog.ShowDialog();
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.ShowDialog());
                     }
 
                     OnProgressChanged?.Invoke(value, ProgressValue);
@@ -43,17 +41,17 @@ namespace Nemont.WPF.AppService
         }
 
         private double progressValue;
-        public double ProgressValue {
+        private double ProgressValue {
             get => progressValue;
             set {
                 progressValue = value;
 
-                if (Stopwatch.ElapsedMilliseconds > UpdateInterval) {
+                if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
                     if (IsDialog == false) {
-                        WMessageDialog.Show();
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
                     }
                     else {
-                        WMessageDialog.ShowDialog();
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.ShowDialog());
                     }
 
                     OnProgressChanged?.Invoke(ProgressText, value);
@@ -68,12 +66,12 @@ namespace Nemont.WPF.AppService
             set {
                 log = value;
 
-                if (Stopwatch.ElapsedMilliseconds > UpdateInterval) {
+                if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
                     if (IsDialog == false) {
-                        WMessageDialog.Show();
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
                     }
                     else {
-                        WMessageDialog.ShowDialog();
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.ShowDialog());
                     }
 
                     OnLogChanged?.Invoke(value);
@@ -88,9 +86,6 @@ namespace Nemont.WPF.AppService
             DMessageDialog = new DMessageDialog();
             WMessageDialog = new MessageDialog(DMessageDialog);
 
-            Stopwatch = new Stopwatch();
-            Stopwatch.Start();
-
             OnLogChanged += DMessageDialog.OnMessageChanged;
             OnProgressChanged += DMessageDialog.OnProgressChanged;
             DMessageDialog.RcClear = new Service.RelayCommand(() => { Clear(); });
@@ -101,8 +96,15 @@ namespace Nemont.WPF.AppService
             SetDialogInfo(dialogStartInfo);
         }
 
-        public override void RunTask(Action<MessageTask> method)
+        /// <summary>
+        /// 매개변수가 하나인 캡슐화된 메서드를 다른 스레드에서 실행합니다.
+        /// </summary>
+        /// <param name="method"></param>
+        public override void RunTask(Action method)
         {
+            if (Task != null && Task.IsBusy == true) {
+                return;
+            }
             DMessageDialog.IsProcessMode = true;
             WMessageDialog.ButtonCancel.Click += (sender, e) => Task.OnStopProcess();
 
@@ -111,28 +113,43 @@ namespace Nemont.WPF.AppService
 
         protected override void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Task.WorkerCompleteAction?.Invoke();
+            try {
+                Task.WorkerCompleteAction?.Invoke();
 
-            if (Task.Exception == null) {
-                WriteLine("\r\nPROCESS IS COMPLETED");
-                WMessageDialog.IsCompleted = true;
-                if (Task.IsWarning == false) {
-                    WMessageDialog.Close();
+                if (Task.Exception == null) {
+                    WriteLine("\r\nPROCESS IS COMPLETED");
+                    Flush();
+
+                    if (Task.IsWarning == false) {
+                        WMessageDialog.Close();
+                    }
+                }
+                else {
+                    if (Task.Exception is TaskCanceledException) {
+                        WriteLine("\r\nPROCESS IS CANCELED");
+                        Flush();
+
+                        WMessageDialog.Close();
+
+                        return;
+                    }
+                    WriteLine("\r\nTHE PROCESS ABORTED DUE TO AN ERROR.\r\nERROR : " + Task.Exception.Message);
+                    WriteLine(Task.Exception.StackTrace);
+                    Flush();
                 }
             }
-            else {
-                if (Task.Exception is TaskCanceledException) {
-                    WriteLine("\r\nPROCESS IS CANCELED");
-
-                    WMessageDialog.CompleteClose();
-                }
-                WriteLine("\r\nTHE PROCESS ABORTED DUE TO AN ERROR.\r\nERROR : " + Task.Exception.Message);
-                WriteLine(Task.Exception.StackTrace);
-
-                WMessageDialog.IsCompleted = true;
+            finally {
+                Task.IsCompleted = true;
+                DMessageDialog.IsProcessMode = false;
+                CompleteProgress();
+                Task = null;
             }
         }
 
+        /// <summary>
+        /// StartInfo로부터 LogDialog의 속성을 설정합니다.
+        /// </summary>
+        /// <param name="dialogStartInfo">설정할 속성이 있는 StartInfo입니다.</param>
         public void SetDialogInfo(StartInfo dialogStartInfo)
         {
             WMessageDialog.Owner = dialogStartInfo.Owner ?? WMessageDialog.Owner;
@@ -143,16 +160,27 @@ namespace Nemont.WPF.AppService
             IsDialog = dialogStartInfo.IsDialog;
         }
 
+        /// <summary>
+        /// 진행 상황 텍스트를 설정합니다.
+        /// </summary>
+        /// <param name="text">설정할 진행 상황 텍스트입니다.</param>
         public void SetProgressText(string text)
         {
             ProgressText = text;
         }
 
+        /// <summary>
+        /// 진행 상황 막대값을 설정합니다.
+        /// </summary>
+        /// <param name="value">설정할 막대값입니다. 범위는 0에서 1 사이입니다.</param>
         public void SetProgressValue(double value)
         {
             ProgressValue = value;
         }
 
+        /// <summary>
+        /// 진행 상황 컨텍스트를 초기화하고 다이얼로그에 표시합니다.
+        /// </summary>
         public void InitializeProgress()
         {
             WMessageDialog.Dispatcher.Invoke(() => {
@@ -162,6 +190,9 @@ namespace Nemont.WPF.AppService
             });
         }
 
+        /// <summary>
+        /// 진행 상황 컨텍스를 다이얼로그에서 숨깁니다.
+        /// </summary>
         public void CompleteProgress()
         {
             WMessageDialog.Dispatcher.Invoke(() => {
@@ -169,15 +200,29 @@ namespace Nemont.WPF.AppService
             });
         }
 
-        public void CloseDialog()
+        /// <summary>
+        /// 메시지 다이얼로그를 숨깁니다.
+        /// </summary>
+        public void HideDialog()
         {
-            WMessageDialog.CompleteClose();
+            WMessageDialog.Close();
         }
 
-        public void Flush()
+        /// <summary>
+        /// 메시지 다이얼로그를 강제로 닫습니다. 이 메서드를 호출하면 인스턴스를 더 이상 사용할 수 없습니다.
+        /// </summary>
+        public void CloseDialog()
+        {
+            WMessageDialog.ForceClose();
+        }
+
+        /// <summary>
+        /// 작업 중단 또는 종료 시 표시되지 않은 로그를 모두 출력하도록 인보크를 수행합니다.
+        /// </summary>
+        public override void Flush()
         {
             OnLogChanged?.Invoke(log);
-            OnProgressChanged?.Invoke(ProgressText, ProgressValue);
+            OnProgressChanged?.Invoke(progressText, progressValue);
         }
     }
 }

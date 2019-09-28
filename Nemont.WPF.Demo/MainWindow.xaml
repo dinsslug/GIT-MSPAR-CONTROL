@@ -11,6 +11,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid Width="300">
@@ -30,7 +31,19 @@
                 </Nemont:DataGrid.Columns>
             </Nemont:DataGrid>
         </Border>
-        <StackPanel Grid.Column="2" Margin="5" Width="200">
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Margin="3">
+                <Button Command="{Binding RcStop}">
+                    <Image Source="/Nemont.WPF.AppService;component/Asset/stop.png" Width="16" Height="16" SnapsToDevicePixels="True" VerticalAlignment="Center" />
+                </Button>
+            </StackPanel>
+            <Nemont:TextBox x:Name="TextBox" TextChanged="TextChanged" Text="{Binding TextThread}" TextWrapping="Wrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1"/>
+        </Grid>
+        <StackPanel Grid.Column="3" Margin="5" Width="200">
             <TextBox />
             <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Height="20" />
             <Nemont:TextBox Text="TextBox" Margin="0,5,0,0" EmptyDescription="asdf" Width="200" HorizontalAlignment="Right" VerticalContentAlignment="Center" />
