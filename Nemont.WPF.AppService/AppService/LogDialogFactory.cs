@@ -87,19 +87,44 @@ namespace Nemont.WPF.AppService
             SetDialogInfo(dialogStartInfo);
         }
 
-        /// <summary>
-        /// 매개변수가 하나인 캡슐화된 메서드를 다른 스레드에서 실행합니다.
-        /// </summary>
-        /// <param name="method"></param>
+        public void RunTask(Action<LogDialogFactory> method)
+        {
+            Action action = () => {
+                try {
+                    Task.Process.Kill();
+                }
+                catch {
+                    Debug.WriteLine("Failed to kill process.");
+                }
+                method.Invoke(this);
+            };
+            _RunTask(action);
+        }
+
         public override void RunTask(Action method)
+        {
+            Action action = () => {
+                try {
+                    Task.Process.Kill();
+                }
+                catch {
+                    Debug.WriteLine("Failed to kill process.");
+                }
+                method.Invoke();
+            };
+            _RunTask(action);
+        }
+
+        protected override void _RunTask(Action action)
         {
             if (Task != null && Task.IsBusy == true) {
                 return;
             }
+
             DMessageDialog.IsProcessMode = true;
             WMessageDialog.ButtonCancel.Click += (sender, e) => Task.OnStopProcess();
 
-            base.RunTask(method);
+            base._RunTask(action);
 
             if (IsShowDialog == true) {
                 WMessageDialog.ShowDialog();

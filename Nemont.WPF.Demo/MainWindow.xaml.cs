@@ -214,7 +214,7 @@ namespace Nemont.Demo
         {
         }
 
-        private void Message1()
+        private void Message1(LogDialogFactory log)
         {
             App.Log.UpdateIntervalTime = 10;
             for (int i = 0; i < 30; i++, App.Task.ThrowIfCancellationRequested()) {
@@ -227,9 +227,9 @@ namespace Nemont.Demo
                     //throw new Exception("ASDFASDF");
                 }
 
-                App.Log.ReplaceLine(string.Format("Line {0}", i + 1));
+                log.ReplaceLine(string.Format("Line {0}", i + 1));
             }
-            App.Log.WriteLine("Complete!");
+            log.WriteLine("Complete!");
 
             App.Log.WriteLine("Run Progress...");
             App.Log.InitializeProgress();
