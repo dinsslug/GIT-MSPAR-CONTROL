@@ -19,7 +19,7 @@ namespace Nemont.WPF.AppService
         public MessageTask Task;
 
         protected Stopwatch Stopwatch;
-        public int UpdateIntervalTime = 500;
+        public int UpdateIntervalTime = 0;
 
         protected string log;
         public virtual string Log {
