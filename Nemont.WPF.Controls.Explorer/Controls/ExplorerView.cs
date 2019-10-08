@@ -15,13 +15,13 @@ namespace Nemont.WPF.Controls
 {
     public class ExplorerView : TreeView
     {
-        public ViewManager Manager { get { return (ViewManager)GetValue(ManagerProperty); } set { SetValue(ManagerProperty, value); } }
+        public ExplorerManager Manager { get { return (ExplorerManager)GetValue(ManagerProperty); } set { SetValue(ManagerProperty, value); } }
         public static readonly DependencyProperty ManagerProperty =
-            DependencyProperty.Register(nameof(Manager), typeof(ViewManager), typeof(ExplorerView),
+            DependencyProperty.Register(nameof(Manager), typeof(ExplorerManager), typeof(ExplorerView),
                 new FrameworkPropertyMetadata(null, OnManagerPropertyChanged));
 
         public new IEnumerable ItemsSource {
-            get { return ((ViewManager)GetValue(ManagerProperty)).Root; }
+            get { return ((ExplorerManager)GetValue(ManagerProperty)).Root; }
             private set { SetValue(ItemsSourceProperty, value); }
         }
 
@@ -169,7 +169,7 @@ namespace Nemont.WPF.Controls
 
             target_item.Focus();
             Manager.OnRightClick?.Invoke(context, target_item, this, e);
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)

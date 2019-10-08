@@ -43,8 +43,6 @@ namespace Nemont.WPF.Controls.Explorer
 
     public abstract class EvBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         // Binding Variables
         protected string name = "";
         protected string toolTip = "";
@@ -64,6 +62,8 @@ namespace Nemont.WPF.Controls.Explorer
         {
             Name = name;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string prop)
         {
@@ -90,10 +90,18 @@ namespace Nemont.WPF.Controls.Explorer
     public class EvFile : EvItem, IFile
     {
         public string RelativePath { get; set; }
+        public virtual string DefaultIconUri => "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/icon_default.png";
 
-        public EvFile(string fileName, string relativePath) : base(fileName, "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/icon_default.png")
+        public EvFile(string fileName, string relativePath) : base(fileName)
         {
             RelativePath = relativePath;
+
+            IconUri = DefaultIconUri;
+        }
+
+        public static EvBase Create(string fileName, string relativePath)
+        {
+            return new EvFile(fileName, relativePath);
         }
     }
 
@@ -101,8 +109,8 @@ namespace Nemont.WPF.Controls.Explorer
     {
         // Icon
         public string IconClosedUri { get; set; }
-
         public string IconOpenedUri { get; set; }
+
         // Binding Variables
         protected ObservableCollection<EvBase> sub = new ObservableCollection<EvBase>();
         protected bool isNodeExpanded = false;

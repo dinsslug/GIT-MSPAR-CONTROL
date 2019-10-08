@@ -3,9 +3,8 @@
     xmlns:s="clr-namespace:Nemont.WPF.Service"
     xmlns:c="clr-namespace:Nemont.WPF.Controls"
     xmlns:cex="clr-namespace:Nemont.WPF.Controls.Explorer"
+    xmlns:local="clr-namespace:Nemont.WPF.Themes.Style"
     x:Class="Nemont.WPF.Themes.Style.ExplorerView">
-    <s:IconConverter x:Key="IconConverter" />
-    <s:StatusIconConverter x:Key="StatusIconConverter" />
     <s:MarginConverter x:Key="MarginConverter" />
     <Style x:Key="TreeViewItemFocusVisual">
         <Setter Property="Control.Template">
@@ -70,8 +69,9 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type c:ExplorerViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Padding" Value="1,0,0,0"/>
         <!--<Setter Property="ToolTip" Value="{Binding ToolTip}" />-->
         <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded, Mode=TwoWay}"/>
@@ -83,7 +83,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type c:ExplorerViewItem}">
-                    <Grid SnapsToDevicePixels="True">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MinWidth="19" Width="Auto"/>
                             <ColumnDefinition/>
@@ -94,8 +94,8 @@
                         </Grid.RowDefinitions>
                         <Grid x:Name="PART_Content" Grid.ColumnSpan="2">
                             <Grid Margin="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}, Converter={StaticResource MarginConverter}}">
-                                <Border x:Name="Bd" />
-                                <Border x:Name="Cover">
+                                <Border x:Name="Bd" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                <Border x:Name="Cover" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                     <Border.Style>
                                         <Style TargetType="{x:Type Border}">
                                             <Setter Property="Background" Value="Black" />
@@ -113,11 +113,14 @@
                                 </Border>
                             </Grid>
                             <Border x:Name="BdHeader" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                 <ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="19,0,0,0" />
                             </Border>
                         </Grid>
-                        <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ExpandCollapseToggleStyle}" />
+                        <ToggleButton x:Name="Expander" ClickMode="Press"
+                                      IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                      Style="{StaticResource ExpandCollapseToggleStyle}" />
                         <ItemsPresenter x:Name="ItemsHost" Grid.ColumnSpan="2" Grid.Row="1" Margin="19,0,0,0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -160,16 +163,22 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style TargetType="{x:Type c:ExplorerView}" BasedOn="{StaticResource {x:Type TreeView}}">
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="Contained" />
+    </Style>
+    <s:IconConverter x:Key="IconConverter" />
+    <s:StatusIconConverter x:Key="StatusIconConverter" />
     <Style x:Key="StatusModeImage" TargetType="{x:Type Image}">
         <Setter Property="Width" Value="8" />
         <Setter Property="Height" Value="16" />
         <Setter Property="Margin" Value="-9,0,0,0" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Source" Value="{Binding Status, Converter={StaticResource StatusIconConverter}}" />
     </Style>
-    <HierarchicalDataTemplate DataType="{x:Type cex:EvFolder}" ItemsSource="{Binding Children}">
+    <HierarchicalDataTemplate x:Key="{ComponentResourceKey c:ExplorerView, BaseTemplate_Folder}">
         <StackPanel Orientation="Horizontal" Margin="4,0,3,0">
             <Image Style="{StaticResource StatusModeImage}" />
-            <Image x:Name="icon" Source="{Binding IconClosedUri, Converter={StaticResource IconConverter}}" Width="16" Height="16" />
+            <Image x:Name="icon" Source="{Binding IconClosedUri, Converter={StaticResource IconConverter}}" Width="16" Height="16" SnapsToDevicePixels="True" />
             <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" Margin="4,0,0,0" VerticalAlignment="Center" />
         </StackPanel>
         <HierarchicalDataTemplate.Triggers>
@@ -182,14 +191,18 @@
             </MultiDataTrigger>
         </HierarchicalDataTemplate.Triggers>
     </HierarchicalDataTemplate>
-    <DataTemplate DataType="{x:Type cex:EvItem}">
+    <DataTemplate x:Key="{ComponentResourceKey c:ExplorerView, BaseTemplate_Item}">
         <StackPanel Orientation="Horizontal" Margin="4,0,3,0">
             <Image Style="{StaticResource StatusModeImage}" />
-            <Image Source="{Binding IconUri, Converter={StaticResource IconConverter}}" Width="16" Height="16" />
+            <Image Source="{Binding IconUri, Converter={StaticResource IconConverter}}" Width="16" Height="16" SnapsToDevicePixels="True"/>
             <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" Margin="4,0,0,0" VerticalAlignment="Center" />
         </StackPanel>
     </DataTemplate>
-    <Style TargetType="{x:Type c:ExplorerView}" BasedOn="{StaticResource {x:Type TreeView}}">
-        <Setter Property="KeyboardNavigation.TabNavigation" Value="Contained" />
-    </Style>
+    <HierarchicalDataTemplate DataType="{x:Type cex:EvFolder}" ItemsSource="{Binding Children}">
+        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {ComponentResourceKey c:ExplorerView, BaseTemplate_Folder}}" />
+    </HierarchicalDataTemplate>
+    <DataTemplate DataType="{x:Type cex:EvItem}">
+        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {ComponentResourceKey c:ExplorerView, BaseTemplate_Item}}" />
+    </DataTemplate>
 </ResourceDictionary>
+    

@@ -34,13 +34,15 @@ namespace Nemont.Demo
         public ObservableCollection<Data> DataList { get { return dataList; } set { dataList = value; OnPropertyChanged("DataList"); } }
         public double SpinnerValue { get { return spinnerValue; } set { spinnerValue = value; OnPropertyChanged("SpinnerValue"); } }
         public string TextThread { get { return textThread; } set { textThread = value; OnPropertyChanged(nameof(TextThread)); } }
-        public ViewManager ViewManager { get; set; }
+        public FileExplorerManager ViewManager { get; set; }
         public RelayCommand RcStop { get; }
         public RelayCommand RcTest { get; }
         public RelayCommand RcProgress1 { get; }
         public RelayCommand RcProgress2 { get; }
         public RelayCommand RcMessage1 { get; }
         public RelayCommand RcMessage2 { get; }
+
+        public MainWindow C;
 
         public LogFactory TextLog;
         public MessageTask TextTask => TextLog.Task;
@@ -60,7 +62,7 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample1", "0", "EEE"));
             DataList.Add(new Data("Sample3", "3", "EEE"));
 
-            //InitializeExplorer();
+            InitializeExplorer();
 
             App.Log = new LogDialogFactory();
 
@@ -80,11 +82,11 @@ namespace Nemont.Demo
 
         public void InitializeExplorer()
         {
-            ViewManager = new ViewManager("E:\\HNC", true);
+            ViewManager = new FileExplorerManager("E:\\HNC", true);
             ViewManager.ExceptExtensions.Add(".txt");
-            ViewManager.AddFilter(typeof(EvText), ".txt1");
-            ViewManager.AddFilter(typeof(EvText), ".txt2");
-            ViewManager.AddFilter(typeof(EvText), ".txt3");
+            ViewManager.SetFilter(typeof(EvFile), ".exe");
+            ViewManager.SetFilter(typeof(EvText), ".txt2");
+            ViewManager.SetFilter(typeof(EvText), ".txt3");
             StatusManager.Add((int)StatusMode.None, "");
             StatusManager.Add((int)StatusMode.Checked, "pack://application:,,,/Nemont.WPF.Demo;component/Asset/status_check.png");
             StatusManager.Add((int)StatusMode.Undefined, "pack://application:,,,/Nemont.WPF.Demo;component/Asset/status_undefine.png");
@@ -302,6 +304,8 @@ namespace Nemont.Demo
     /// </summary>
     public partial class MainWindow : Window
     {
+        public VMMainWindow ViewModel => DataContext as VMMainWindow;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -312,6 +316,8 @@ namespace Nemont.Demo
         private void Window_Closed(object sender, EventArgs e)
         {
             App.Log.CloseDialog();
+
+            ViewModel.C = this;
         }
 
         private void TextChanged(object sender, TextChangedEventArgs e)

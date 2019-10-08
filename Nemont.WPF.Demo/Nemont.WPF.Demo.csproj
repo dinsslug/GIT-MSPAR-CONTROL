@@ -137,6 +137,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Asset\work_et.png" />
     <Content Include="Exec\TestProgram1.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

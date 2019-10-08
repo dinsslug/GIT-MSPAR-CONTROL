@@ -9,6 +9,7 @@ namespace Nemont.WPF.Controls.Explorer
     public enum FilterMode
     {
         FolderOnly,
-        All
+        All,
+        Nothing
     }
 }

@@ -28,8 +28,12 @@ namespace Nemont.WPF.Service
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var index = System.Convert.ToInt32(value);
-            var uri = StatusManager.Status[index];
             var defaultUri = "pack://application:,,,/Nemont.WPF.Controls.Explorer;Component/Asset/status_empty.png";
+            if (StatusManager.Status.ContainsKey(index) == false) {
+                return new BitmapImage(new Uri(defaultUri));
+            }
+
+            var uri = StatusManager.Status[index];
 
             try {
                 if (!string.IsNullOrEmpty(uri) && Uri.IsWellFormedUriString(uri, UriKind.RelativeOrAbsolute)) {

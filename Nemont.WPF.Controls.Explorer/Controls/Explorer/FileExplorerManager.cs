@@ -1,48 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
 using Nemont.WPF.Model;
 using Nemont.WPF.Service;
 
 namespace Nemont.WPF.Controls.Explorer
 {
-    public class ViewManager : INotifyPropertyChanged
+    public class FileExplorerManager : ExplorerManager
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        // Binding Variables
-        private bool autoRefresh = false;
-        private ObservableCollection<EvBase> root = new ObservableCollection<EvBase>();
-        public bool AutoRefresh { get { return autoRefresh; } set { autoRefresh = value; Watcher.EnableRaisingEvents = value; } }
-        public ObservableCollection<EvBase> Root { get { return root; } set { root = value; OnPropertyChanged(nameof(Root)); } }
-
-        // Local Variables
-        public string Path { get; set; }
         private string filter = "*";
+        private Dictionary<string, string> IconSetter = new Dictionary<string, string>();
         private Dictionary<string, FilterInfo> Filter = new Dictionary<string, FilterInfo>();
         private FileSystemWatcher Watcher;
+
+        private bool autoRefresh = false;
+
+        /// <summary>
+        /// 탐색기가 참조하는 디렉토리의 내용이 바뀔 때 자동으로 새로 고침할지에 대한 여부를 설정합니다.
+        /// </summary>
+        public bool AutoRefresh { get { return autoRefresh; } set { autoRefresh = value; Watcher.EnableRaisingEvents = value; } }
+
+        /// <summary>
+        /// 새로 고침 시 탐색기 목록에서 제외할 확장자를 포함합니다.
+        /// </summary>
         public List<string> ExceptExtensions = new List<string>();
 
-        public Action<EvBase, TreeViewItem, ExplorerView, MouseButtonEventArgs> OnDoubleClick;
-        public Action<EvBase, TreeViewItem, ExplorerView, MouseButtonEventArgs> OnRightClick;
+        /// <summary>
+        /// 최상위 폴더 경로입니다.
+        /// </summary>
+        public string RootDirectoryPath { get; }
 
-        public ViewManager() { }
-        public ViewManager(string path, bool autoRefresh)
+        /// <summary>
+        /// 빈 내용의 파일 탐색기 매니저입니다.
+        /// </summary>
+        public FileExplorerManager() { }
+
+        /// <summary>
+        /// 주어진 최상위 경로에 대해 새 파일 탐색기를 초기화합니다.
+        /// </summary>
+        public FileExplorerManager(string rootDirectoryPath, bool autoRefresh)
         {
-            Path = path;
+            RootDirectoryPath = rootDirectoryPath;
             Filter.Add("?", new FilterInfo(typeof(EvItem), -2));
             Filter.Add("//", new FilterInfo(typeof(EvFileFolder), -1));
             Filter.Add("*", new FilterInfo(typeof(EvFile), 0));
-            Root.Add(new EvFileFolder(Path, ""));
+            Root.Add(new EvFileFolder(RootDirectoryPath, ""));
             Watcher = new FileSystemWatcher() {
-                Path = Path,
+                Path = RootDirectoryPath,
                 Filter = "*.*",
                 IncludeSubdirectories = true,
             };
@@ -54,17 +62,39 @@ namespace Nemont.WPF.Controls.Explorer
             AutoRefresh = autoRefresh;
         }
 
-        public void AddFilter(Type type, string extension)
+        /// <summary>
+        /// 새로 고침 시 특정 확장자에 대응할 고유한 아이콘 경로를 지정합니다.
+        /// </summary>
+        public void SetIconSetter(string extension, string iconUri)
         {
-            try {
-                Filter.Add(extension, new FilterInfo(type, Filter.Count - 2));
-                Filter["*"].Order = Filter.Count - 2;
+            var lower_ext = extension.ToLower();
+
+            if (IconSetter.ContainsKey(lower_ext) == true) {
+                IconSetter[lower_ext] = iconUri;
             }
-            catch {
-                throw;
+            else {
+                IconSetter.Add(extension.ToLower(), iconUri);
             }
         }
 
+        public string GetIconSetter(string extension)
+        {
+            if (IconSetter.ContainsKey(extension.ToLower()) == false) {
+                return null;
+            }
+            return IconSetter[extension];
+        }
+
+        public void SetFilter(Type type, string extension)
+        {
+            var newItem = new FilterInfo(type, Filter.Count - 2);
+            Filter.Add(extension.ToLower(), newItem);
+            Filter["*"].Order = Filter.Count - 2;
+        }
+
+        /// <summary>
+        /// 특정 필터링 모드에 대해 필터링을 수행합니다.
+        /// </summary>
         public void Filtering(FilterMode filterMode)
         {
             if (filterMode == FilterMode.FolderOnly) {
@@ -75,16 +105,29 @@ namespace Nemont.WPF.Controls.Explorer
                 filter = "*";
                 RefreshDirectory();
             }
+            else if (filterMode == FilterMode.Nothing) {
+                foreach (var root in Root) {
+                    root.Visibility = System.Windows.Visibility.Collapsed;
+                }
+            }
         }
 
+        /// <summary>
+        /// 특정 확장자에 대해 필터링을 수행합니다.
+        /// </summary>
         public void Filtering(string fileExtension)
         {
-            if (fileExtension != "\\" && fileExtension != "*" && Filter.ContainsKey(fileExtension) == true) {
-                filter = fileExtension;
+            var lower_ext = fileExtension.ToLower();
+
+            if (lower_ext != "\\" && lower_ext != "*" && Filter.ContainsKey(lower_ext) == true) {
+                filter = lower_ext;
                 RefreshDirectory();
             }
         }
 
+        /// <summary>
+        /// 수동으로 새로 고침을 수행합니다.
+        /// </summary>
         public void RefreshDirectory()
         {
             RefreshRecur(Root[0] as EvFileFolder);
@@ -92,7 +135,7 @@ namespace Nemont.WPF.Controls.Explorer
 
         private void RefreshRecur(EvFileFolder parent)
         {
-            var absPath = Path + "\\" + parent.RelativePath;
+            var absPath = RootDirectoryPath + "\\" + parent.RelativePath;
             var dirInfo = new DirectoryInfo(absPath);
 
             var fileSystems = dirInfo.GetFileSystemInfos();
@@ -116,23 +159,25 @@ namespace Nemont.WPF.Controls.Explorer
                 }
             }
 
-            /// Add item if a file don't exist in the treeview
+            /// 찾은 파일이 탐색기 목록에 없을 경우 추가
             for (int i = 0; i < existChk.Length; i++) {
                 if (existChk[i] == false) {
                     var name = fileSystems[i].Name;
-                    var path = GetRelativePath(Path, fileSystems[i].FullName);
+                    var path = GetRelativePath(RootDirectoryPath, fileSystems[i].FullName);
                     var toolTip = fileSystems[i].FullName;
 
                     if (Directory.Exists(fileSystems[i].FullName)) {
+                        /// 폴더가 존재할 경우 폴더 추가
                         var addFolder = new EvFileFolder(name, path) { ToolTip = toolTip };
                         RefreshRecur(addFolder);
                         parent.Sub.Add(addFolder);
                     }
                     else {
-                        EvFile addItem;
-                        var ext = System.IO.Path.GetExtension(fileSystems[i].Name);
+                        /// 폴더가 아닌 파일일 경우 파일 추가
+                        EvItem addItem;
+                        var ext = Path.GetExtension(fileSystems[i].Name).ToLower();
                         var fil = Filter.ContainsKey(ext);
-                        var isException = ExceptExtensions.FindIndex(item => item == ext);
+                        var isException = ExceptExtensions.FindIndex(item => item.ToLower() == ext);
                         if (isException != -1) {
                             continue;
                         }
@@ -141,6 +186,9 @@ namespace Nemont.WPF.Controls.Explorer
                         }
                         else {
                             addItem = new EvFile(name, path);
+                        }
+                        if (IconSetter.ContainsKey(ext) == true) {
+                            addItem.IconUri = IconSetter[ext];
                         }
                         addItem.ToolTip = toolTip;
                         parent.Sub.Add(addItem);
@@ -151,7 +199,8 @@ namespace Nemont.WPF.Controls.Explorer
             /// Filtering
             for (int i = 0; i < parent.Sub.Count; i++) {
                 var item = parent.Sub[i];
-                if (item is EvFile && (filter == "\\" || (filter != "*" && filter != System.IO.Path.GetExtension(item.Name)))) {
+                var ext = Path.GetExtension(item.Name).ToLower();
+                if (item is EvFile && (filter == "\\" || (filter != "*" && filter != ext))) {
                     parent.Sub.Remove(parent.Sub[i]);
                     i--;
                 }
@@ -198,11 +247,6 @@ namespace Nemont.WPF.Controls.Explorer
             System.Windows.Application.Current.Dispatcher.Invoke(() => {
                 RefreshDirectory();
             });
-        }
-
-        internal void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

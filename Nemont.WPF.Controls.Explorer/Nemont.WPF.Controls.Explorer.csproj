@@ -46,12 +46,13 @@
   <ItemGroup>
     <Compile Include="Controls\ExplorerView.cs" />
     <Compile Include="Controls\ExplorerViewItem.cs" />
+    <Compile Include="Controls\Explorer\FileExplorerManager.cs" />
     <Compile Include="Controls\Explorer\FilterMode.cs" />
     <Compile Include="Service\Converter.cs" />
     <Compile Include="Service\Interfaces.cs" />
     <Compile Include="Controls\Explorer\StatusManager.cs" />
     <Compile Include="Service\RelayCommand.cs" />
-    <Compile Include="Controls\Explorer\ViewManager.cs" />
+    <Compile Include="Controls\Explorer\ExplorerManager.cs" />
     <Compile Include="Controls\Explorer\ViewModels.cs" />
     <Compile Include="Model\FilterInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

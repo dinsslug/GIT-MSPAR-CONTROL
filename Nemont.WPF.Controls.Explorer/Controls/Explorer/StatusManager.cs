@@ -12,12 +12,7 @@ namespace Nemont.WPF.Controls.Explorer
 
         public static void Add(int mode, string iconUri)
         {
-            try {
-                Status.Add(mode, iconUri);
-            }
-            catch {
-                throw;
-            }
+            Status.Add(mode, iconUri);
         }
     }
 }
