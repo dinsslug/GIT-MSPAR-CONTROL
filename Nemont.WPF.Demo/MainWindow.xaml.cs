@@ -195,7 +195,7 @@ namespace Nemont.Demo
         {
             var startInfo = new StartInfo() {
                 Owner = Application.Current.MainWindow,
-                IsDialog = true,
+                IsDialog = false,
                 Title = "Thread 1",
                 ShowInTaskBar = false,
             };
@@ -216,7 +216,7 @@ namespace Nemont.Demo
         {
         }
 
-        private void Message1(LogDialogFactory log)
+        private void Message1()
         {
             App.Log.UpdateIntervalTime = 10;
             for (int i = 0; i < 30; i++, App.Task.ThrowIfCancellationRequested()) {
@@ -226,12 +226,12 @@ namespace Nemont.Demo
                     App.Task.IsWarning = false;
                 }
                 if (i > 25) {
-                    //throw new Exception("ASDFASDF");
+                    throw new Exception("ASDFASDF");
                 }
 
-                log.ReplaceLine(string.Format("Line {0}", i + 1));
+                App.Log.ReplaceLine(string.Format("Line {0}", i + 1));
             }
-            log.WriteLine("Complete!");
+            App.Log.WriteLine("Complete!");
 
             App.Log.WriteLine("Run Progress...");
             App.Log.InitializeProgress();

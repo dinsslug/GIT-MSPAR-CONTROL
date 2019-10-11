@@ -20,6 +20,7 @@ namespace Nemont.WPF.AppService
         private DMessageDialog DMessageDialog;
         private MessageDialog WMessageDialog;
         private bool IsShowDialog = false;
+        public bool AutoShow = true;
 
         private string progressText;
         private string ProgressText {
@@ -28,7 +29,7 @@ namespace Nemont.WPF.AppService
                 progressText = value;
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
-                    if (IsShowDialog == false) {
+                    if (IsShowDialog == false && AutoShow == true) {
                         Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
                     }
 
@@ -44,7 +45,7 @@ namespace Nemont.WPF.AppService
                 progressValue = value;
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
-                    if (IsShowDialog == false) {
+                    if (IsShowDialog == false && AutoShow == true) {
                         Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
                     }
 
@@ -61,7 +62,7 @@ namespace Nemont.WPF.AppService
                 log = value;
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
-                    if (IsShowDialog == false) {
+                    if (IsShowDialog == false && AutoShow == true) {
                         Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
                     }
 
