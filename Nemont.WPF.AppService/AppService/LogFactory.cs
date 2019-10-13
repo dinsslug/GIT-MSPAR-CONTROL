@@ -114,7 +114,7 @@ namespace Nemont.WPF.AppService
 
                         return;
                     }
-                    WriteLine("\r\nPROCESS ABORTED DUE TO AN ERROR.\r\nERROR : " + Task.Exception.Message);
+                    WriteLine("\r\nPROCESS ABORTED DUE TO AN ERROR.\r\n" + Task.Exception.Message);
                     WriteLine(Task.Exception.StackTrace);
                 }
             }
