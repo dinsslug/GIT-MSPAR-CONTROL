@@ -24,8 +24,5 @@ namespace Nemont.WPF.Controls
 
         public static Brush ExpandedGroupBoxBackground { get; }
         public static ComponentResourceKey ExpandedGroupBoxBackgroundKey => new ComponentResourceKey(typeof(TabColors), nameof(ExpandedGroupBoxBackground));
-
-        public static Brush ExpandedGroupBoxForeground { get; }
-        public static ComponentResourceKey ExpandedGroupBoxForegroundKey => new ComponentResourceKey(typeof(TabColors), nameof(ExpandedGroupBoxForeground));
     }
 }

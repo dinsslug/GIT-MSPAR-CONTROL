@@ -6,35 +6,38 @@
     <SolidColorBrush x:Key="{x:Static c:TabColors.SelectedChildBackgroundKey}" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.8" />
     <SolidColorBrush x:Key="{x:Static c:TabColors.SelectedChildForegroundKey}" Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}" />
     <SolidColorBrush x:Key="{x:Static c:TabColors.ExpandedGroupBoxBackgroundKey}" Color="#FFFFFADB" />
-    <SolidColorBrush x:Key="{x:Static c:TabColors.ExpandedGroupBoxForegroundKey}" Color="Black" />
-    <Style x:Key="TabTreeArrow_PathStyle" TargetType="{x:Type Path}">
-        <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Style x:Key="TabGroupBox_ArrowPathStyle" TargetType="{x:Type Path}">
         <Setter Property="Data" Value="F1M0,0L9,0 5,4 4,4 0,0z" />
         <Setter Property="Margin" Value="3,5,2,5" />
     </Style>
-    <ControlTemplate x:Key="TabTree_ToggleButtonTemplate" TargetType="{x:Type c:TabButton}">
-        <Border BorderBrush="{TemplateBinding BorderBrush}"
-                Background="{TemplateBinding Background}"
-                BorderThickness="{TemplateBinding BorderThickness}">
-            <Grid>
-                <Border x:Name="Bd" />
-                <ContentPresenter VerticalAlignment="Center" Margin="5" />
-            </Grid>
-        </Border>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#19707070" />
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
     <Style TargetType="{x:Type c:TabButton}">
         <Setter Property="Foreground" Value="Black"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{x:Null}"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="Height" Value="25" />
-        <Setter Property="Template" Value="{StaticResource TabTree_ToggleButtonTemplate}" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type c:TabButton}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <Grid>
+                            <Border x:Name="Bd" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <ContentPresenter VerticalAlignment="Center" Margin="5" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#19707070" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static c:TabColors.SelectedForegroundKey}}" />
@@ -42,7 +45,16 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style x:Key="TabTree_ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="TabButton_ChildStyle" TargetType="{x:Type c:TabButton}" BasedOn="{StaticResource {x:Type c:TabButton}}">
+        <Setter Property="Height" Value="25" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static c:TabColors.SelectedChildForegroundKey}}" />
+                <Setter Property="Background" Value="{DynamicResource {x:Static c:TabColors.SelectedChildBackgroundKey}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="TabGroupBox_ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="Foreground" Value="Black" />
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -56,7 +68,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                         <Grid>
-                            <Path x:Name="PART_Arrow" Style="{StaticResource TabTreeArrow_PathStyle}"
+                            <Path x:Name="PART_Arrow" Style="{StaticResource TabGroupBox_ArrowPathStyle}"
                                   Fill="{TemplateBinding Foreground}"
                                   Margin="0,0,5,0"
                                   HorizontalAlignment="Right"
@@ -81,18 +93,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type c:TabGroupBox}">
-        <Setter Property="ItemContainerStyle">
-            <Setter.Value>
-                <Style TargetType="{x:Type c:TabButton}" BasedOn="{StaticResource {x:Type c:TabButton}}">
-                    <Style.Triggers>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource {x:Static c:TabColors.SelectedChildForegroundKey}}" />
-                            <Setter Property="Background" Value="{DynamicResource {x:Static c:TabColors.SelectedChildBackgroundKey}}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource TabButton_ChildStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type c:TabGroupBox}">
@@ -102,10 +103,12 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid x:Name="Bd" Height="30">
-                            <Border x:Name="Bd_Btn_Toggle" Background="{DynamicResource {x:Static c:TabColors.SelectedBackgroundKey}}" Visibility="Hidden" />
+                            <Border x:Name="Bd_Btn_Toggle"
+                                    Background="{DynamicResource {x:Static c:TabColors.SelectedBackgroundKey}}"
+                                    Visibility="Hidden" />
                             <Border x:Name="Bd_Mask" />
                             <ToggleButton x:Name="Btn_Toggle" Content="{TemplateBinding Header}" IsChecked="{TemplateBinding IsChecked}"
-                                          Style="{StaticResource TabTree_ToggleButtonStyle}" />
+                                          Style="{StaticResource TabGroupBox_ToggleButtonStyle}" />
                         </Grid>
                         <ItemsPresenter x:Name="PART_Items" Grid.Row="1" Visibility="Collapsed" />
                     </Grid>
@@ -115,7 +118,6 @@
                         </Trigger>
                         <Trigger Property="IsChecked" SourceName="Btn_Toggle" Value="True">
                             <Setter Property="Visibility" Value="Visible" TargetName="PART_Items" />
-                            <Setter Property="Foreground" Value="{DynamicResource {x:Static c:TabColors.ExpandedGroupBoxForegroundKey}}" />
                             <Setter Property="Background" Value="{DynamicResource {x:Static c:TabColors.ExpandedGroupBoxBackgroundKey}}" />
                         </Trigger>
                         <Trigger SourceName="Bd_Btn_Toggle" Property="Visibility" Value="Visible">

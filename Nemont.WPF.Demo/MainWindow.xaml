@@ -59,7 +59,7 @@
                                 <Image Source="/Nemont.WPF.AppService;component/Asset/stop.png" Width="16" Height="16" SnapsToDevicePixels="True" VerticalAlignment="Center" />
                             </Button>
                         </StackPanel>
-                        <Nemont:TextBox x:Name="TextBox" TextChanged="TextChanged" Text="{Binding TextThread}" TextWrapping="Wrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1"/>
+                        <Nemont:TextBox x:Name="CTextBox" TextChanged="TextChanged" Text="{Binding TextThread}" TextWrapping="Wrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1"/>
                     </Grid>
                     <StackPanel Grid.Column="3" Margin="5" Width="200">
                         <TextBox />

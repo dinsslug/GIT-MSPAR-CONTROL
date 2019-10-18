@@ -325,8 +325,8 @@ namespace Nemont.Demo
 
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox.CaretIndex = TextBox.Text.Length;
-            TextBox.ScrollToEnd();
+            CTextBox.CaretIndex = CTextBox.Text.Length;
+            CTextBox.ScrollToEnd();
         }
     }
 }

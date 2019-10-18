@@ -20,9 +20,14 @@ namespace Nemont.WPF.Controls.Explorer
         private bool autoRefresh = false;
 
         /// <summary>
-        /// 탐색기가 참조하는 디렉토리의 내용이 바뀔 때 자동으로 새로 고침할지에 대한 여부를 설정합니다.
+        /// 탐색기가 참조하는 디렉토리의 내용이 바뀔 때 자동으로 새로고침 할지에 대한 여부를 설정합니다.
         /// </summary>
         public bool AutoRefresh { get { return autoRefresh; } set { autoRefresh = value; Watcher.EnableRaisingEvents = value; } }
+
+        /// <summary>
+        /// 탐색기에서 새로고침했을 때 수행되는 후처리 작업입니다.
+        /// </summary>
+        public Action PostActionRefresh;
 
         /// <summary>
         /// 새로 고침 시 탐색기 목록에서 제외할 확장자를 포함합니다.
@@ -131,6 +136,8 @@ namespace Nemont.WPF.Controls.Explorer
         public void RefreshDirectory()
         {
             RefreshRecur(Root[0] as EvFileFolder);
+
+            PostActionRefresh?.Invoke();
         }
 
         private void RefreshRecur(EvFileFolder parent)
