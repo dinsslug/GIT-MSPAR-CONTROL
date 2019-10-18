@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Title="MainWindow" Width="900" Height="500" UseLayoutRounding="True" Closed="Window_Closed">
     <Window.Resources>
-        <SolidColorBrush x:Key="{x:Static Nemont:TabButton.SelectedBackground}" Color="Red" />
+        <Nemont:IndexCheckedConverter x:Key="ICConverter" />
     </Window.Resources>
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid.ColumnDefinitions>
@@ -16,10 +16,14 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-            <Nemont:TabButton Content="General" />
-            <Nemont:TabButton Content="Tab 1" />
+            <Nemont:TabButton Content="General" IsChecked="{Binding IdxTab, Converter={StaticResource ICConverter}, ConverterParameter=0}" />
+            <Nemont:TabButton Content="Tab 1" IsChecked="{Binding IdxTab, Converter={StaticResource ICConverter}, ConverterParameter=1}"/>
+            <Nemont:TabGroupBox Header="Group 1">
+                <Nemont:TabButton Content="Tab 2" IsChecked="{Binding IdxTab, Converter={StaticResource ICConverter}, ConverterParameter=2}"/>
+                <Nemont:TabButton Content="Tab 3" IsChecked="{Binding IdxTab, Converter={StaticResource ICConverter}, ConverterParameter=3}"/>
+            </Nemont:TabGroupBox>
         </StackPanel>
-        <TabControl Grid.Column="1">
+        <TabControl SelectedIndex="{Binding IdxTab}" Grid.Column="1">
             <TabItem Visibility="Collapsed">
                 <Grid>
                     <Grid.ColumnDefinitions>

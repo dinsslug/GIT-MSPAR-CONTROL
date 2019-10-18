@@ -24,7 +24,7 @@ namespace Nemont.WPF.AppService
 
         private string progressText;
         private string ProgressText {
-            get => progressText;
+            get { return progressText; }
             set {
                 progressText = value;
 
@@ -40,7 +40,7 @@ namespace Nemont.WPF.AppService
 
         private double progressValue;
         private double ProgressValue {
-            get => progressValue;
+            get { return progressValue; }
             set {
                 progressValue = value;
 
@@ -57,7 +57,7 @@ namespace Nemont.WPF.AppService
         }
 
         public override string Log {
-            get => log;
+            get { return log; }
             set {
                 log = value;
 

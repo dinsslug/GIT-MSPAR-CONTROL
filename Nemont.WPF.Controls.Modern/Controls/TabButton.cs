@@ -13,13 +13,6 @@ namespace Nemont.WPF.Controls
 {
     public class TabButton : RadioButton
     {
-        public static SolidColorBrush SelectedBackground { get; set; } = SystemColors.HighlightBrush;
-
-        [Category("Brushes")]
-        public Brush SelectedForeground { get { return (Brush)GetValue(SelectedForegroundProperty); } set { SetValue(SelectedForegroundProperty, value); } }
-        public static DependencyProperty SelectedForegroundProperty =
-            DependencyProperty.Register(nameof(SelectedForeground), typeof(Brush), typeof(TabButton), new PropertyMetadata(SystemColors.HighlightTextBrush));
-
         static TabButton()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TabButton), new FrameworkPropertyMetadata(typeof(TabButton)));

@@ -23,7 +23,7 @@ namespace Nemont.WPF.AppService
 
         protected string log;
         public virtual string Log {
-            get => log;
+            get { return log; }
             set {
                 log = value;
 

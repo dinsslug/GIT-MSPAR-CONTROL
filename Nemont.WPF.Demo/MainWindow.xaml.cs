@@ -42,6 +42,9 @@ namespace Nemont.Demo
         public RelayCommand RcMessage1 { get; }
         public RelayCommand RcMessage2 { get; }
 
+        private int idxTab;
+        public int IdxTab { get { return idxTab; } set { idxTab = value; OnPropertyChanged(nameof(IdxTab)); } }
+
         public MainWindow C;
 
         public LogFactory TextLog;
@@ -62,7 +65,7 @@ namespace Nemont.Demo
             DataList.Add(new Data("Sample1", "0", "EEE"));
             DataList.Add(new Data("Sample3", "3", "EEE"));
 
-            InitializeExplorer();
+            //InitializeExplorer();
 
             App.Log = new LogDialogFactory();
 
