@@ -131,6 +131,10 @@
       <Project>{a0fd7c08-e443-4452-a74a-b45a46ce1b25}</Project>
       <Name>Nemont.WPF.Controls.Explorer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Nemont.WPF.Controls.Modern\Nemont.WPF.Controls.Modern.csproj">
+      <Project>{7a7d9f80-d5c3-4499-b0dd-6abcd0c3c139}</Project>
+      <Name>Nemont.WPF.Controls.Modern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nemont.WPF.Controls\Nemont.WPF.Controls.csproj">
       <Project>{2e613b5d-52ee-4ccb-84e0-d1cc40f80602}</Project>
       <Name>Nemont.WPF.Controls</Name>

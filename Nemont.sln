@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemont.WPF.Controls", "Nemo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemont.WPF.Controls.Explorer", "Nemont.WPF.Controls.Explorer\Nemont.WPF.Controls.Explorer.csproj", "{A0FD7C08-E443-4452-A74A-B45A46CE1B25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemont.WPF.Controls.Modern", "Nemont.WPF.Controls.Modern\Nemont.WPF.Controls.Modern.csproj", "{7A7D9F80-D5C3-4499-B0DD-6ABCD0C3C139}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0FD7C08-E443-4452-A74A-B45A46CE1B25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A7D9F80-D5C3-4499-B0DD-6ABCD0C3C139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7D9F80-D5C3-4499-B0DD-6ABCD0C3C139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7D9F80-D5C3-4499-B0DD-6ABCD0C3C139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7D9F80-D5C3-4499-B0DD-6ABCD0C3C139}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
