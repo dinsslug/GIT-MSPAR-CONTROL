@@ -17,9 +17,16 @@ namespace Nemont.WPF.AppService.Threading
     {
         internal event RaiseProcessChangedHandler OnProcessChanged;
 
+        internal bool IsHandleException;
+
+        /// <summary>
+        /// 현재 작업 중인지에 대한 여부를 가져옵니다.
+        /// </summary>
+        public bool IsBusy => Worker.IsBusy;
+
         public bool IsWarning = false;
         public bool IsCompleted = false;
-        public bool IsBusy => Worker.IsBusy;
+        public bool IsCanceled = false;
         public Process Process;
         public string ProcessLog;
 
@@ -65,11 +72,21 @@ namespace Nemont.WPF.AppService.Threading
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            try {
-                WorkerAction?.Invoke();
+            if (IsHandleException == true) {
+                try {
+                    WorkerAction?.Invoke();
+                }
+                catch (Exception ex) {
+                    Exception = ex;
+                }
             }
-            catch (Exception ex) {
-                Exception = ex;
+            else {
+                try {
+                    WorkerAction?.Invoke();
+                }
+                catch (TaskCanceledException ex) {
+                    Exception = ex;
+                }
             }
         }
 
@@ -84,6 +101,7 @@ namespace Nemont.WPF.AppService.Threading
         public void ThrowIfCancellationRequested()
         {
             if (Worker.CancellationPending == true) {
+                IsCanceled = true;
                 throw new TaskCanceledException();
             }
         }

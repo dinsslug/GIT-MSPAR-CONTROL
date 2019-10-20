@@ -21,6 +21,35 @@ namespace Nemont.WPF.AppService
         protected Stopwatch Stopwatch;
         public int UpdateIntervalTime = 0;
 
+        /// <summary>
+        /// 작업 내에서 예외가 발생할 경우 예외를 처리하고 메시지를 보낼 것인지 여부를 가져오거나 설정합니다.
+        /// </summary>
+        public bool IsHandleException = false;
+
+        /// <summary>
+        /// 작업이 완료되었을 경우 보낼 메시지를 가져오거나 설정합니다.
+        /// </summary>
+        public string TaskMessageCompleted = "";
+
+        /// <summary>
+        /// 작업이 취소되었을 경우 보낼 메시지를 가져오거나 설정합니다.
+        /// </summary>
+        public string TaskMessageCanceled = "";
+
+        /// <summary>
+        /// 작업 중 예외가 발생했을 경우 메시지를 가져오거나 설정합니다.
+        /// </summary>
+        public string TaskMessageErrorOccurred = "";
+
+        public string DefaultTaskMessageCompleted = "";
+        public string DefaultTaskMessageCanceled = "";
+        public string DefaultTaskMessageErrorOccurred = "";
+
+        /// <summary>
+        /// 한 작업이 끝날 경우 작업 메시지를 기본값으로 초기화할지에 대한 여부를 가져오거나 설정합니다.
+        /// </summary>
+        public bool IsClearTaskMessageTerminated = true;
+
         protected string log;
         public virtual string Log {
             get { return log; }
@@ -93,6 +122,7 @@ namespace Nemont.WPF.AppService
                 return;
             }
             Task = new MessageTask();
+            Task.IsHandleException = IsHandleException;
             Task.OnProcessChanged += (line) => WriteLine(line);
             Task.Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
             Task.WorkerAction = action;
@@ -106,19 +136,25 @@ namespace Nemont.WPF.AppService
                 Task.WorkerCompleteAction?.Invoke();
 
                 if (Task.Exception == null) {
-                    WriteLine("\r\nPROCESS IS COMPLETED");
+                    Write(TaskMessageCompleted);
                 }
                 else {
                     if (Task.Exception is TaskCanceledException) {
-                        WriteLine("\r\nPROCESS IS CANCELED");
+                        Write(TaskMessageCanceled);
 
                         return;
                     }
-                    WriteLine("\r\nPROCESS ABORTED DUE TO AN ERROR.\r\n" + Task.Exception.Message);
+                    Write(TaskMessageErrorOccurred);
+                    WriteLine(Task.Exception.Message);
                     WriteLine(Task.Exception.StackTrace);
                 }
             }
             finally {
+                if (IsClearTaskMessageTerminated == true) {
+                    TaskMessageCompleted = DefaultTaskMessageCompleted;
+                    TaskMessageCanceled = DefaultTaskMessageCanceled;
+                    TaskMessageErrorOccurred = DefaultTaskMessageErrorOccurred;
+                }
                 Task.IsCompleted = true;
                 Flush();
                 Task = null;

@@ -138,7 +138,7 @@ namespace Nemont.WPF.AppService
                 Task.WorkerCompleteAction?.Invoke();
 
                 if (Task.Exception == null) {
-                    WriteLine("\r\nPROCESS IS COMPLETED");
+                    Write(TaskMessageCompleted);
                     Flush();
 
                     if (Task.IsWarning == false) {
@@ -147,19 +147,25 @@ namespace Nemont.WPF.AppService
                 }
                 else {
                     if (Task.Exception is TaskCanceledException) {
-                        WriteLine("\r\nPROCESS IS CANCELED");
+                        Write(TaskMessageCanceled);
                         Flush();
 
                         WMessageDialog.Close();
 
                         return;
                     }
-                    WriteLine("\r\nTHE PROCESS ABORTED DUE TO AN ERROR.\r\n" + Task.Exception.Message);
+                    Write(TaskMessageErrorOccurred);
+                    WriteLine(Task.Exception.Message);
                     WriteLine(Task.Exception.StackTrace);
                     Flush();
                 }
             }
             finally {
+                if (IsClearTaskMessageTerminated == true) {
+                    TaskMessageCompleted = DefaultTaskMessageCompleted;
+                    TaskMessageCanceled = DefaultTaskMessageCanceled;
+                    TaskMessageErrorOccurred = DefaultTaskMessageErrorOccurred;
+                }
                 Task.IsCompleted = true;
                 DMessageDialog.IsProcessMode = false;
                 CompleteProgress();
