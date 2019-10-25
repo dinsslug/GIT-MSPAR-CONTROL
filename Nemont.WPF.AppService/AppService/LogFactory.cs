@@ -170,6 +170,8 @@ namespace Nemont.WPF.AppService
         {
             LogBody = "";
             LogLine = "";
+
+            Flush();
         }
 
         public string GetLog()
@@ -179,22 +181,44 @@ namespace Nemont.WPF.AppService
 
         public void Write(string value)
         {
-            LogBody += value;
+            Write(value, true);
         }
 
-        public void WriteLine()
+        public void Write(string value, bool isFlush)
         {
-            LogBody += "\r\n";
+            LogBody += value;
+
+            if (isFlush == true) {
+                Flush();
+            }
         }
 
         public void WriteLine(string value)
         {
+            WriteLine(value, true);
+        }
+
+        public void WriteLine(string value, bool isFlush)
+        {
             LogBody += value + "\r\n";
+
+            if (isFlush == true) {
+                Flush();
+            }
         }
 
         public void ReplaceLine(string value)
         {
+            ReplaceLine(value, true);
+        }
+
+        public void ReplaceLine(string value, bool isFlush)
+        {
             LogLine = value;
+
+            if (isFlush == true) {
+                Flush();
+            }
         }
 
         public void PrintError(string message, Exception ex)
@@ -203,6 +227,8 @@ namespace Nemont.WPF.AppService
             WriteLine("> " + ex.Message);
             WriteLine("> Stack Trace : ");
             WriteLine(ex.StackTrace + "\r\n");
+
+            Flush();
         }
 
         /// <summary>
