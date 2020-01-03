@@ -43,16 +43,23 @@ namespace Nemont.WPF.AppService.Threading
         public void OnMessageChanged(string text)
         {
             Message = text;
+        }
 
-            Application.Current.Dispatcher.Invoke((ThreadStart)(() => { }), DispatcherPriority.ApplicationIdle);
+        public void OnMessageIdleChanged(string text)
+        {
+            Message = text;
         }
 
         public void OnProgressChanged(string progressText, double progressValue)
         {
             ProgressText = progressText;
             ProgressValue = progressValue;
+        }
 
-            Application.Current.Dispatcher.Invoke((ThreadStart)(() => { }), DispatcherPriority.ApplicationIdle);
+        public void OnProgressIdleChanged(string progressText, double progressValue)
+        {
+            ProgressText = progressText;
+            ProgressValue = progressValue;
         }
 
         private void OnClear()

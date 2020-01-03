@@ -157,6 +157,20 @@ namespace Nemont.WPF.Controls
 
         protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
         {
+            base.OnMouseLeftButtonDown(e);
+
+            var target_item = Support.FindVisualParent<TreeViewItem>(e.OriginalSource as DependencyObject);
+            if (target_item == null) {
+                return;
+            }
+
+            target_item.Focus();
+        }
+
+        protected override void OnPreviewMouseRightButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseRightButtonUp(e);
+
             var target_item = Support.FindVisualParent<TreeViewItem>(e.OriginalSource as DependencyObject);
             if (target_item == null) {
                 return;
@@ -167,14 +181,12 @@ namespace Nemont.WPF.Controls
                 return;
             }
 
-            target_item.Focus();
             Manager.OnRightClick?.Invoke(context, target_item, this, e);
-            //e.Handled = true;
         }
 
-        protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
+        protected override void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
         {
-            base.OnMouseDoubleClick(e);
+            base.OnPreviewMouseDoubleClick(e);
 
             if (e.ChangedButton == MouseButton.Right) {
                 return;

@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Nemont.WPF.AppService.Threading;
 
 namespace Nemont.WPF.AppService
@@ -20,6 +22,7 @@ namespace Nemont.WPF.AppService
         private DMessageDialog DMessageDialog;
         private MessageDialog WMessageDialog;
         private bool IsShowDialog = false;
+        private bool IsProcessMode = false;
         public bool AutoShow = true;
 
         private string progressText;
@@ -30,10 +33,15 @@ namespace Nemont.WPF.AppService
 
                 if (Stopwatch.ElapsedMilliseconds > UpdateIntervalTime) {
                     if (IsShowDialog == false && AutoShow == true) {
-                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());
+                        Application.Current.Dispatcher.Invoke(() => WMessageDialog.Show());                        
+                    }
+                    OnProgressChanged?.Invoke(value, ProgressValue);
+
+                    if (IsProcessMode == false) {
+                        Application.Current.Dispatcher.Invoke((ThreadStart)(() => { }), DispatcherPriority.ApplicationIdle);
                     }
 
-                    OnProgressChanged?.Invoke(value, ProgressValue);
+                    Stopwatch.Restart();
                 }
             }
         }
@@ -50,6 +58,10 @@ namespace Nemont.WPF.AppService
                     }
 
                     OnProgressChanged?.Invoke(ProgressText, value);
+
+                    if (IsProcessMode == false) {
+                        Application.Current.Dispatcher.Invoke((ThreadStart)(() => { }), DispatcherPriority.ApplicationIdle);
+                    }
 
                     Stopwatch.Restart();
                 }
@@ -68,6 +80,10 @@ namespace Nemont.WPF.AppService
 
                     OnLogChanged?.Invoke(value);
 
+                    if (IsProcessMode == false) {
+                        Application.Current.Dispatcher.Invoke((ThreadStart)(() => { }), DispatcherPriority.ApplicationIdle);
+                    }
+
                     Stopwatch.Restart();
                 }
             }
@@ -80,6 +96,7 @@ namespace Nemont.WPF.AppService
 
             OnLogChanged += DMessageDialog.OnMessageChanged;
             OnProgressChanged += DMessageDialog.OnProgressChanged;
+
             DMessageDialog.RcClear = new Service.RelayCommand(() => { Clear(); });
         }
 
@@ -122,7 +139,7 @@ namespace Nemont.WPF.AppService
                 return;
             }
 
-            DMessageDialog.IsProcessMode = true;
+            IsProcessMode = DMessageDialog.IsProcessMode = true;
             WMessageDialog.ButtonCancel.Click += (sender, e) => Task.OnStopProcess();
 
             base._RunTask(action);
@@ -167,7 +184,7 @@ namespace Nemont.WPF.AppService
                     TaskMessageErrorOccurred = DefaultTaskMessageErrorOccurred;
                 }
                 Task.IsCompleted = true;
-                DMessageDialog.IsProcessMode = false;
+                IsProcessMode = DMessageDialog.IsProcessMode = false;
                 CompleteProgress();
                 Task = null;
             }
@@ -225,6 +242,16 @@ namespace Nemont.WPF.AppService
             WMessageDialog.Dispatcher.Invoke(() => {
                 DMessageDialog.ProgressVisibility = Visibility.Collapsed;
             });
+        }
+
+        public void ShowDialog()
+        {
+            if (IsShowDialog == true) {
+                WMessageDialog.ShowDialog();
+            }
+            else {
+                WMessageDialog.Show();
+            }
         }
 
         /// <summary>

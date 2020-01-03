@@ -145,15 +145,16 @@ namespace Nemont.WPF.Controls.Explorer
             var absPath = RootDirectoryPath + "\\" + parent.RelativePath;
             var dirInfo = new DirectoryInfo(absPath);
 
-            var fileSystems = dirInfo.GetFileSystemInfos();
-            var existChk = new bool[fileSystems.Length];
+            var files = dirInfo.GetFileSystemInfos();
+            var check_exist = new bool[files.Length];
 
             for (int i = 0; i < parent.Sub.Count; i++) {
                 var item = parent.Sub[i];
                 if (!(item is IFile)) {
                     continue;
                 }
-                var find = Array.FindIndex(fileSystems, j => j.Name == item.Name);
+
+                var find = Array.FindIndex(files, file => file.Name == item.Name);
                 if (find == -1) {
                     parent.Sub.Remove(parent.Sub[i]);
                     i--;
@@ -162,18 +163,19 @@ namespace Nemont.WPF.Controls.Explorer
                     if (item is EvFileFolder) {
                         RefreshRecur(parent.Sub[i] as EvFileFolder);
                     }
-                    existChk[find] = true;
+                    item.IsNodeSelected = false;
+                    check_exist[find] = true;
                 }
             }
 
             /// 찾은 파일이 탐색기 목록에 없을 경우 추가
-            for (int i = 0; i < existChk.Length; i++) {
-                if (existChk[i] == false) {
-                    var name = fileSystems[i].Name;
-                    var path = GetRelativePath(RootDirectoryPath, fileSystems[i].FullName);
-                    var toolTip = fileSystems[i].FullName;
+            for (int i = 0; i < check_exist.Length; i++) {
+                if (check_exist[i] == false) {
+                    var name = files[i].Name;
+                    var path = GetRelativePath(RootDirectoryPath, files[i].FullName);
+                    var toolTip = files[i].FullName;
 
-                    if (Directory.Exists(fileSystems[i].FullName)) {
+                    if (Directory.Exists(files[i].FullName)) {
                         /// 폴더가 존재할 경우 폴더 추가
                         var addFolder = new EvFileFolder(name, path) { ToolTip = toolTip };
                         RefreshRecur(addFolder);
@@ -182,7 +184,7 @@ namespace Nemont.WPF.Controls.Explorer
                     else {
                         /// 폴더가 아닌 파일일 경우 파일 추가
                         EvItem addItem;
-                        var ext = Path.GetExtension(fileSystems[i].Name).ToLower();
+                        var ext = Path.GetExtension(files[i].Name).ToLower();
                         var fil = Filter.ContainsKey(ext);
                         var isException = ExceptExtensions.FindIndex(item => item.ToLower() == ext);
                         if (isException != -1) {
