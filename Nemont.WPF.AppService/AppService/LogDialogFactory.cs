@@ -140,7 +140,13 @@ namespace Nemont.WPF.AppService
             }
 
             IsProcessMode = DMessageDialog.IsProcessMode = true;
-            WMessageDialog.ButtonCancel.Click += (sender, e) => Task.OnStopProcess();
+            WMessageDialog.ButtonCancel.Click += (sender, e) => {
+                var res = MessageBox.Show("Do you want to stop task?", "Message", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.No) {
+                    return;
+                }
+                Task.OnStopProcess();
+            };
 
             base._RunTask(action);
 
