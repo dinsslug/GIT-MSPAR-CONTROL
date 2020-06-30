@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Nemont.WPF.Controls
 {
@@ -31,22 +32,25 @@ namespace Nemont.WPF.Controls
         
         public Spinner()
         {
-            Loaded += Spinner_Loaded;
         }
 
-        private void Spinner_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnRender(DrawingContext drawingContext)
         {
-            try
-            {
-                var partButtonUp = (RepeatButton)Template.FindName("PART_ButtonUp", this);
-                var partButtonDown = (RepeatButton)Template.FindName("PART_ButtonDown", this);
-                
-                partButtonUp.PreviewMouseLeftButtonDown += PartButton_PreviewMouseLeftButtonDown;
-                partButtonDown.PreviewMouseLeftButtonDown += PartButton_PreviewMouseLeftButtonDown;
-                partButtonUp.PreviewMouseLeftButtonUp += PartButton_PreviewMouseLeftButtonUp;
-                partButtonDown.PreviewMouseLeftButtonUp += PartButton_PreviewMouseLeftButtonUp;
+            base.OnRender(drawingContext);
+
+            if (IsControlRendered == true) {
+                return;
             }
-            catch { }
+
+            var partButtonUp = (RepeatButton)Template.FindName("PART_ButtonUp", this);
+            var partButtonDown = (RepeatButton)Template.FindName("PART_ButtonDown", this);
+
+            partButtonUp.PreviewMouseLeftButtonDown += PartButton_PreviewMouseLeftButtonDown;
+            partButtonDown.PreviewMouseLeftButtonDown += PartButton_PreviewMouseLeftButtonDown;
+            partButtonUp.PreviewMouseLeftButtonUp += PartButton_PreviewMouseLeftButtonUp;
+            partButtonDown.PreviewMouseLeftButtonUp += PartButton_PreviewMouseLeftButtonUp;
+
+            IsControlRendered = true;
         }
 
         private void PartButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

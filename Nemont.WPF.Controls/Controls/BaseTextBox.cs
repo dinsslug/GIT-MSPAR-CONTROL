@@ -15,9 +15,10 @@ namespace Nemont.WPF.Controls
 {
     public class BaseTextBox : System.Windows.Controls.TextBox
     {
+        protected bool IsControlRendered = false;
+
         public BaseTextBox()
         {
-            Loaded += TextBox_Loaded;
         }
 
         static BaseTextBox()
@@ -31,15 +32,12 @@ namespace Nemont.WPF.Controls
         public static readonly DependencyProperty InputModeProperty =
             DependencyProperty.RegisterAttached("InputMode", typeof(TextBoxMode), typeof(BaseTextBox), new FrameworkPropertyMetadata(TextBoxMode.Normal));
 
-        protected void TextBox_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnRender(DrawingContext drawingContext)
         {
-            try
-            {
-                var partContentHost = (ScrollViewer)Template.FindName("PART_ContentHost", this);
+            base.OnRender(drawingContext);
 
-                partContentHost.MouseLeftButtonDown += PartContentHost_MouseLeftButtonDown;
-            }
-            catch { }
+            var partContentHost = (ScrollViewer)Template.FindName("PART_ContentHost", this);
+            partContentHost.MouseLeftButtonDown += PartContentHost_MouseLeftButtonDown;
         }
 
         private void PartContentHost_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

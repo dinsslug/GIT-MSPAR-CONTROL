@@ -24,16 +24,21 @@ namespace Nemont.WPF.Controls
 
         public TextBox()
         {
-            Loaded += NemontTextBox_Loaded;
         }
 
-        private void NemontTextBox_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnRender(DrawingContext drawingContext)
         {
-            TextBox_Loaded(sender, e);
+            base.OnRender(drawingContext);
+
+            if (IsControlRendered == true) {
+                return;
+            }
 
             CheckTextLength();
+
+            IsControlRendered = true;
         }
-        
+
         [Category("Common Properties")]
         public string DefaultText { get { return (string)GetValue(DefaultTextProperty); } set { SetValue(DefaultTextProperty, value); } }
         public static readonly DependencyProperty DefaultTextProperty =
